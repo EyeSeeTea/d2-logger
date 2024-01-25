@@ -1,5 +1,5 @@
 import * as rcpromise from "real-cancellable-promise";
-// import { Cancellation } from "real-cancellable-promise";
+import { Cancellation } from "real-cancellable-promise";
 import { FutureData } from "../../../data/api-futures";
 
 /**
@@ -178,28 +178,28 @@ interface CaptureAsync<E> {
 
 type ParallelOptions = { concurrency: number };
 
-// export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
-//     const abortController = new AbortController();
+export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
+    const abortController = new AbortController();
 
-//     return Future.fromComputation((resolve, reject) => {
-//         // exceptions: TypeError | DOMException[name=AbortError]
-//         fetch(url, { method: "get", signal: abortController.signal })
-//             .then(res => res.json() as U) // exceptions: SyntaxError
-//             .then(data => resolve(data))
-//             .catch((error: unknown) => {
-//                 if (isNamedError(error) && error.name === "AbortError") {
-//                     throw new Cancellation();
-//                 } else if (error instanceof TypeError || error instanceof SyntaxError) {
-//                     reject(error);
-//                 } else {
-//                     reject(new TypeError("Unknown error"));
-//                 }
-//             });
+    return Future.fromComputation((resolve, reject) => {
+        // exceptions: TypeError | DOMException[name=AbortError]
+        fetch(url, { method: "get", signal: abortController.signal })
+            .then(res => res.json() as U) // exceptions: SyntaxError
+            .then(data => resolve(data))
+            .catch((error: unknown) => {
+                if (isNamedError(error) && error.name === "AbortError") {
+                    throw new Cancellation();
+                } else if (error instanceof TypeError || error instanceof SyntaxError) {
+                    reject(error);
+                } else {
+                    reject(new TypeError("Unknown error"));
+                }
+            });
 
-//         return () => abortController.abort();
-//     });
-// }
+        return () => abortController.abort();
+    });
+}
 
-// function isNamedError(error: unknown): error is { name: string } {
-//     return Boolean(error && typeof error === "object" && "name" in error);
-// }
+function isNamedError(error: unknown): error is { name: string } {
+    return Boolean(error && typeof error === "object" && "name" in error);
+}
