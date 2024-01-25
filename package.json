@@ -8,24 +8,26 @@
         "type": "git",
         "url": "git+https://github.com/EyeSeeTea/d2-logger.git"
     },
+    "main": "index.js",
+    "types": "index.d.ts",
     "scripts": {
         "clean": "rimraf build",
         "build-babel": "babel src --out-dir build --extensions \".js,.jsx,.ts,.tsx\"",
         "build-base": "mkdir -p build && cp README.md LICENSE package.json build/ && yarn build-babel && tsc",
-        "build": "yarn code-quality && yarn build-base",
+        "build": "yarn clean && yarn code-quality && yarn build-base",
         "code-quality": "yarn lint && yarn prettify && echo disabled yarn test",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "prettify": "prettier \"{.,src}/**/*.{js,jsx,ts,tsx,json}\" --write",
         "prerelease": "yarn build",
         "release": "bash scripts/publish.sh",
-        "test": "vitest"
+        "test": "vitest",
+        "script-program-example": "npx ts-node src/scripts/index.ts programLogger log",
+        "script-console-example": "npx ts-node src/scripts/index.ts consoleLogger log"
     },
     "dependencies": {
         "@babel/runtime": "^7.5.4",
         "@eyeseetea/d2-api": "1.14.0",
         "cmd-ts": "0.13.0",
-        "purify-ts": "1.2.0",
-        "purify-ts-extra-codec": "0.6.0",
         "real-cancellable-promise": "^1.1.2",
         "typed-immutable-map": "0.2.0"
     },
