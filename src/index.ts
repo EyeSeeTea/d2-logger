@@ -1,66 +1,75 @@
-import { LoggerD2Repository } from "./data/repositories/LoggerD2Repository";
-import { LoggerConfig } from "./domain/entities/LoggerConfig";
+import { ProgramLoggerD2Repository } from "./data/repositories/ProgramLoggerD2Repository";
+import { LoggerConfig, ProgramLoggerConfig } from "./domain/entities/LoggerConfig";
+import { MessageType } from "./domain/entities/Log";
+import { CheckConfigProgramLoggerUseCase } from "./domain/usecases/CheckConfigProgramLoggerUseCase";
+import { LogMessageUseCase } from "./domain/usecases/LogMessageUseCase";
 import { LoggerRepository } from "./domain/repositories/LoggerRepository";
-import { InitLoggerUseCase } from "./domain/usecases/InitLoggerUseCase";
-import { LogDebugMessageUseCase } from "./domain/usecases/LogDebugMessageUseCase";
-import { LogErrorMessageUseCase } from "./domain/usecases/LogErrorMessageUseCase";
-import { LogInfoMessageUseCase } from "./domain/usecases/LogInfoMessageUseCase";
-import { LogSuccessMessageUseCase } from "./domain/usecases/LogSuccessMessageUseCase";
-import { LogWarnMessageUseCase } from "./domain/usecases/LogWarnMessageUseCase";
-import { Log, MessageType } from "./domain/entities/Log";
-import { LogMessageFunction, Logger } from "./domain/entities/Logger";
+import { ProgramRepository } from "./domain/repositories/ProgramRepository";
+import { ProgramD2Repository } from "./data/repositories/ProgramD2Repository";
+import { ConsoleLoggerRepository } from "./data/repositories/ConsoleLoggerRepository";
 
-type Repositories = {
-    loggerRepository: LoggerRepository;
-};
+export class Logger {
+    isDebug: boolean | undefined;
+    programRepository: ProgramRepository | undefined;
+    loggerRepository: LoggerRepository | undefined;
 
-const repositories: Repositories = {
-    loggerRepository: new LoggerD2Repository(),
-};
-
-async function initLogger(config: LoggerConfig): Promise<void> {
-    return new InitLoggerUseCase(repositories.loggerRepository).execute(config).toPromise();
-}
-
-function getLogger(messageType: MessageType): LogMessageFunction {
-    return function log(message: string): Promise<void> {
-        const log: Log = { messageType: messageType, message: message };
-        switch (messageType) {
-            case "Debug":
-                return new LogDebugMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
-            case "Info":
-                return new LogInfoMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
-            case "Success":
-                return new LogSuccessMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
-            case "Warn":
-                return new LogWarnMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
-            case "Error":
-                return new LogErrorMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
+    async init(config: LoggerConfig): Promise<void> {
+        this.isDebug = config.debug ?? false;
+        switch (config.type) {
+            case "program":
+                return await this.configProgramLogger(config);
+            case "console":
+                return this.configConsoleLogger();
             default:
-                return new LogInfoMessageUseCase(repositories.loggerRepository)
-                    .execute(log)
-                    .toPromise();
+                return await this.configProgramLogger(config);
         }
-    };
+    }
+
+    debug(message: string): Promise<void> {
+        return this.log(message, "Debug");
+    }
+
+    info(message: string): Promise<void> {
+        return this.log(message, "Info");
+    }
+
+    success(message: string): Promise<void> {
+        return this.log(message, "Success");
+    }
+
+    warn(message: string): Promise<void> {
+        return this.log(message, "Warn");
+    }
+
+    error(message: string): Promise<void> {
+        return this.log(message, "Error");
+    }
+
+    private log(message: string, messageType: MessageType): Promise<void> {
+        if (this.loggerRepository) {
+            return new LogMessageUseCase(this.loggerRepository)
+                .execute({ message: message, messageType: messageType }, this.isDebug)
+                .toPromise();
+        } else {
+            throw new Error(`Logger not initialized properly. Please check configuration.`);
+        }
+    }
+
+    private async configProgramLogger(config: ProgramLoggerConfig): Promise<void> {
+        this.programRepository = new ProgramD2Repository();
+        const isConfigOk = await new CheckConfigProgramLoggerUseCase(this.programRepository)
+            .execute(config)
+            .toPromise();
+        if (isConfigOk) {
+            this.loggerRepository = new ProgramLoggerD2Repository(config);
+        } else {
+            throw new Error(
+                `Logger not initialized properly. Please check program and data elements configuration.`
+            );
+        }
+    }
+
+    private configConsoleLogger(): void {
+        this.loggerRepository = new ConsoleLoggerRepository();
+    }
 }
-
-const logger: Logger = {
-    init: initLogger,
-    debug: getLogger("Debug"),
-    info: getLogger("Info"),
-    success: getLogger("Success"),
-    warn: getLogger("Warn"),
-    error: getLogger("Error"),
-};
-
-export default logger;
