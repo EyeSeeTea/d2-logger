@@ -13,7 +13,7 @@ export interface ConsoleLoggerConfig extends LoggerConfigBase {
 export interface ProgramLoggerConfig extends LoggerConfigBase {
     type: "program";
     baseUrl: string;
-    auth: Auth;
+    auth?: Auth;
     programId: Id;
     loggerDataElements: LoggerDataElements;
     organisationUnitId?: Id;

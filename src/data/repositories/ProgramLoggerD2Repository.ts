@@ -27,7 +27,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             organisationUnitId = GLOBAL_ORGANISATION_UNIT_ID,
         } = config;
 
-        this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        this.api = auth
+            ? new D2Api({ baseUrl: baseUrl, auth: auth })
+            : new D2Api({ baseUrl: baseUrl });
         this.programId = programId;
         this.messageId = loggerDataElements.messageId;
         this.messageTypeId = loggerDataElements.messageTypeId;

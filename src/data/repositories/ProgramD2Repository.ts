@@ -9,7 +9,9 @@ export class ProgramD2Repository implements ProgramRepository {
     checkConfig(config: ProgramLoggerConfig): FutureData<boolean> {
         const { baseUrl, auth, programId, loggerDataElements } = config;
 
-        const d2Api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        const d2Api = auth
+            ? new D2Api({ baseUrl: baseUrl, auth: auth })
+            : new D2Api({ baseUrl: baseUrl });
 
         return this.checkProgramIsOk(d2Api, programId, loggerDataElements).flatMap(programIsOk => {
             if (programIsOk) {
