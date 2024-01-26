@@ -1,4 +1,5 @@
 import { ProgramLoggerD2Repository } from "./data/repositories/ProgramLoggerD2Repository";
+import { ConsoleLoggerRepository } from "./data/repositories/ConsoleLoggerRepository";
 import { LoggerConfig, ProgramLoggerConfig } from "./domain/entities/LoggerConfig";
 import { MessageType } from "./domain/entities/Log";
 import { CheckConfigProgramLoggerUseCase } from "./domain/usecases/CheckConfigProgramLoggerUseCase";
@@ -6,7 +7,6 @@ import { LogMessageUseCase } from "./domain/usecases/LogMessageUseCase";
 import { LoggerRepository } from "./domain/repositories/LoggerRepository";
 import { ProgramRepository } from "./domain/repositories/ProgramRepository";
 import { ProgramD2Repository } from "./data/repositories/ProgramD2Repository";
-import { ConsoleLoggerRepository } from "./data/repositories/ConsoleLoggerRepository";
 
 export class Logger {
     isDebug: boolean | undefined;

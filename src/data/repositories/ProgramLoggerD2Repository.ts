@@ -36,7 +36,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         this.organisationUnitId = organisationUnitId;
     }
 
-    log(log: Log, isDebug?: boolean): FutureData<void> {
+    log(log: Log): FutureData<void> {
         return this.getProgramStage().flatMap(programStage => {
             const d2EventProgram = this.mapLogToD2EventProgam({
                 log,
@@ -46,7 +46,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
                 messageTypeId: this.messageTypeId,
                 programStage,
             });
-            return this.postApiTracker(d2EventProgram, log, isDebug);
+            return this.postApiTracker(d2EventProgram);
         });
     }
 
@@ -67,11 +67,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         });
     }
 
-    private postApiTracker(
-        d2EventProgram: D2TrackerEvent,
-        log: Log,
-        isDebug?: boolean
-    ): FutureData<void> {
+    private postApiTracker(d2EventProgram: D2TrackerEvent): FutureData<void> {
         return apiToFuture(
             this.api.tracker.postAsync(
                 {
@@ -85,13 +81,6 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
                 this.api.system.waitFor(TRACKER_IMPORT_JOB, response.response.id)
             ).flatMap(result => {
                 if (result && result.status !== "ERROR") {
-                    if (isDebug) {
-                        const { message, messageType } = log;
-                        const date = new Date().toISOString();
-                        process.stderr.write(
-                            `[${messageType.toUpperCase()}] [${date}] ${message}\n`
-                        );
-                    }
                     return Future.success(undefined);
                 } else {
                     return Future.error(

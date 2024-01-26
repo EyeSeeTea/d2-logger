@@ -6,6 +6,10 @@ export class LogMessageUseCase {
     constructor(private loggerRepository: LoggerRepository) {}
 
     public execute(log: Log, isDebug?: boolean): FutureData<void> {
-        return this.loggerRepository.log(log, isDebug);
+        if (isDebug) {
+            // eslint-disable-next-line no-console
+            console.log(log);
+        }
+        return this.loggerRepository.log(log);
     }
 }
