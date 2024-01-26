@@ -39,10 +39,11 @@ There are two types of logger output:
 
     Notice:
 
+    - Please note that `auth` is not mandatory if it's used in the DHIS2 app instead of in a script.
     - Please note that if the `organisationUnitId` is not added to the configuration, then the logs will be registered in the DHIS2 program in the global organization unit.
-    - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console.
+    - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console with the format: `[DEBUG] [date] message`
 
-2. Displaying the logs on the console:
+2. Displaying the logs only in the console:
 
     ```typescript
     import { Logger } from "@eyeseetea/d2-logger";
