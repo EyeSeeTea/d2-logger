@@ -47,8 +47,9 @@ export class Logger {
 
     private log(message: string, messageType: MessageType): Promise<void> {
         if (this.loggerRepository) {
+            const options = { isDebug: this.isDebug };
             return new LogMessageUseCase(this.loggerRepository)
-                .execute({ message: message, messageType: messageType }, this.isDebug)
+                .execute({ message: message, messageType: messageType }, options)
                 .toPromise();
         } else {
             throw new Error(`Logger not initialized properly. Please check configuration.`);

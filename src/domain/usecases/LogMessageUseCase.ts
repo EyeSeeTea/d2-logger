@@ -5,8 +5,8 @@ import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 export class LogMessageUseCase {
     constructor(private loggerRepository: LoggerRepository) {}
 
-    public execute(log: Log, isDebug?: boolean): FutureData<void> {
-        if (isDebug) {
+    public execute(log: Log, options?: { isDebug?: boolean }): FutureData<void> {
+        if (options?.isDebug) {
             // eslint-disable-next-line no-console
             console.log(log);
         }
