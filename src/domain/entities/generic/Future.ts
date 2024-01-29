@@ -120,7 +120,7 @@ export class Future<E, D> {
                 const queue: rcpromise.CancellablePromise<void>[] = [];
                 const output: D[] = new Array(asyncs.length);
 
-                for (const [idx, async] of asyncs.entries()) {
+                for (const [idx, async] of asyncs.map((async, idx) => [idx, async] as const)) {
                     const queueItem$ = async._promise().then(res => {
                         queue.splice(queue.indexOf(queueItem$), 1);
                         output[idx] = res;
