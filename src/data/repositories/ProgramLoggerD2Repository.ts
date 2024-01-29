@@ -6,7 +6,6 @@ import { Log } from "../../domain/entities/Log";
 import { ProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
-const GLOBAL_ORGANISATION_UNIT_ID = "H8RixfF8ugH";
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
 const EVENT_PROGRAM_STATUS = "COMPLETED";
@@ -19,13 +18,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     messageTypeId: Id;
 
     constructor(config: ProgramLoggerConfig) {
-        const {
-            baseUrl,
-            auth,
-            programId,
-            dataElements,
-            organisationUnitId = GLOBAL_ORGANISATION_UNIT_ID,
-        } = config;
+        const { baseUrl, auth, programId, dataElements, organisationUnitId } = config;
 
         this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
         this.programId = programId;

@@ -1,7 +1,8 @@
+import { Maybe } from "../../utils/ts-utils";
 import { Id } from "./Base";
 
 interface LoggerConfigBase {
-    debug?: boolean;
+    debug: Maybe<boolean>;
 }
 
 export type LoggerConfig = ProgramLoggerConfig | ConsoleLoggerConfig;
@@ -13,10 +14,10 @@ export interface ConsoleLoggerConfig extends LoggerConfigBase {
 export interface ProgramLoggerConfig extends LoggerConfigBase {
     type: "program";
     baseUrl: string;
-    auth?: Auth;
+    auth: Maybe<Auth>;
     programId: Id;
     dataElements: DataElements;
-    organisationUnitId?: Id;
+    organisationUnitId: Id;
 }
 
 type Auth = {
