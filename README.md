@@ -19,28 +19,21 @@ There are two types of logger output:
 
     await logger.init({
         type: "program",
-        debug: debug,
-        baseUrl: baseUrl,
-        auth: auth,
-        organisationUnitId: organisationUnitId,
-        programId: programId,
-        loggerDataElements: {
-            messageId: messageId,
-            messageTypeId: messageTypeId,
+        debug: true,
+        baseUrl: "https://play.dhis2.org/40.2.2",
+        auth: "admin:district",
+        organisationUnitId: "H8RixfF8ugH",
+        programId: "zARxYmOD18Z",
+        dataElements: {
+            messageId: "BjUzF5E4eR8",
+            messageTypeId: "NpS5LoLuhgS",
         },
     });
-
-    logger.debug("This is a Debug message");
-    logger.info("This is an Info message");
-    logger.success("This is a Success message");
-    logger.warn("This is a Warn message");
-    logger.error("This is an Error message");
     ```
 
     Notice:
 
     - Please note that `auth` is not mandatory if it's used in the DHIS2 app instead of in a script.
-    - Please note that if the `organisationUnitId` is not added to the configuration, then the logs will be registered in the DHIS2 program in the global organization unit.
     - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console.
 
 2. Displaying the logs only in the console:
@@ -53,17 +46,22 @@ There are two types of logger output:
     logger.init({
         type: "console",
     });
-
-    logger.debug("This is a Debug message");
-    logger.info("This is an Info message");
-    logger.success("This is a Success message");
-    logger.warn("This is a Warn message");
-    logger.error("This is an Error message");
     ```
+
+To log messages:
+
+```typescript
+logger.debug("This is a Debug message");
+logger.info("This is an Info message");
+logger.success("This is a Success message");
+logger.warn("This is a Warn message");
+logger.error("This is an Error message");
+```
 
 ## Development
 
 ```bash
+$ nvm use # Selects node in .nvmrc
 $ yarn install
 $ yarn build
 $ cd build
@@ -90,7 +88,8 @@ $ yarn code-quality
 
 ## Publish
 
+First, change in package.json the new version and then run:
+
 ```bash
-$ yarn prerelease
-$ yarn release [--tag beta] [--patch | --minor | --major]
+$ yarn release
 ```
