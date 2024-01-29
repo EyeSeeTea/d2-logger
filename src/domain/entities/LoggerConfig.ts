@@ -2,7 +2,7 @@ import { Maybe } from "../../utils/ts-utils";
 import { Id } from "./Base";
 
 interface LoggerConfigBase {
-    debug: Maybe<boolean>;
+    debug?: boolean;
 }
 
 export type LoggerConfig = ProgramLoggerConfig | ConsoleLoggerConfig;
