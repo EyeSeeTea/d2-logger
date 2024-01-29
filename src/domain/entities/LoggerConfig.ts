@@ -15,7 +15,7 @@ export interface ProgramLoggerConfig extends LoggerConfigBase {
     baseUrl: string;
     auth?: Auth;
     programId: Id;
-    loggerDataElements: LoggerDataElements;
+    dataElements: DataElements;
     organisationUnitId?: Id;
 }
 
@@ -24,7 +24,7 @@ type Auth = {
     password: string;
 };
 
-export type LoggerDataElements = {
+export type DataElements = {
     messageId: Id;
     messageTypeId: Id;
 };

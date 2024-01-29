@@ -54,7 +54,7 @@ export function getCommand() {
                     auth: auth,
                     organisationUnitId: orgUnitId,
                     programId: programId,
-                    loggerDataElements: {
+                    dataElements: {
                         messageId: messageId,
                         messageTypeId: messageTypeId,
                     },

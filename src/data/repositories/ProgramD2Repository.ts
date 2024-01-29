@@ -2,24 +2,24 @@ import { D2Api } from "../../types/d2-api";
 import { apiToFuture, FutureData } from "../../data/api-futures";
 import { Future } from "../../domain/entities/generic/Future";
 import { Id } from "../../domain/entities/Base";
-import { ProgramLoggerConfig, LoggerDataElements } from "../../domain/entities/LoggerConfig";
+import { ProgramLoggerConfig, DataElements } from "../../domain/entities/LoggerConfig";
 import { ProgramRepository } from "../../domain/repositories/ProgramRepository";
 
 export class ProgramD2Repository implements ProgramRepository {
     checkConfig(config: ProgramLoggerConfig): FutureData<boolean> {
-        const { baseUrl, auth, programId, loggerDataElements } = config;
+        const { baseUrl, auth, programId, dataElements } = config;
 
         const d2Api = auth
             ? new D2Api({ baseUrl: baseUrl, auth: auth })
             : new D2Api({ baseUrl: baseUrl });
 
-        return this.checkProgramIsOk(d2Api, programId, loggerDataElements).flatMap(programIsOk => {
+        return this.checkProgramIsOk(d2Api, programId, dataElements).flatMap(programIsOk => {
             if (programIsOk) {
                 return Future.success(programIsOk);
             } else {
                 return Future.error(
                     new Error(
-                        `Logger not initialized properly. Please check configuration of program ${programId}, message data element ${loggerDataElements.messageId} and message type data element ${loggerDataElements.messageTypeId}.`
+                        `Logger not initialized properly. Please check configuration of program ${programId}, message data element ${dataElements.messageId} and message type data element ${dataElements.messageTypeId}.`
                     )
                 );
             }
@@ -29,7 +29,7 @@ export class ProgramD2Repository implements ProgramRepository {
     private checkProgramIsOk(
         api: D2Api,
         programId: Id,
-        loggerDataElements: LoggerDataElements
+        dataElements: DataElements
     ): FutureData<boolean> {
         return apiToFuture(
             api.models.programs.get({
@@ -41,10 +41,10 @@ export class ProgramD2Repository implements ProgramRepository {
                 const programStageDataElements =
                     response.objects[0].programStages[0].programStageDataElements;
                 const messageDataElement = programStageDataElements.find(
-                    ({ dataElement }) => dataElement.id === loggerDataElements?.messageId
+                    ({ dataElement }) => dataElement.id === dataElements?.messageId
                 )?.dataElement;
                 const messageTypeDataElement = programStageDataElements.find(
-                    ({ dataElement }) => dataElement.id === loggerDataElements?.messageTypeId
+                    ({ dataElement }) => dataElement.id === dataElements?.messageTypeId
                 )?.dataElement;
 
                 const isMessageDataElementOk =

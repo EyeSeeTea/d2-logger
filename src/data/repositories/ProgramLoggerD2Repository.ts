@@ -23,7 +23,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             baseUrl,
             auth,
             programId,
-            loggerDataElements,
+            dataElements,
             organisationUnitId = GLOBAL_ORGANISATION_UNIT_ID,
         } = config;
 
@@ -31,8 +31,8 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             ? new D2Api({ baseUrl: baseUrl, auth: auth })
             : new D2Api({ baseUrl: baseUrl });
         this.programId = programId;
-        this.messageId = loggerDataElements.messageId;
-        this.messageTypeId = loggerDataElements.messageTypeId;
+        this.messageId = dataElements.messageId;
+        this.messageTypeId = dataElements.messageTypeId;
         this.organisationUnitId = organisationUnitId;
     }
 
