@@ -48,8 +48,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
                 filter: { id: { eq: this.programId } },
             })
         ).flatMap(response => {
-            if (response.objects[0]?.programStages[0]) {
-                return Future.success(response.objects[0]?.programStages[0]);
+            const programStage = response.objects[0]?.programStages[0];
+            if (programStage) {
+                return Future.success(programStage);
             } else {
                 return Future.error(
                     new Error(`Program stage of program with id ${this.programId} not found`)
