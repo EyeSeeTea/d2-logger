@@ -1,6 +1,6 @@
 {
     "name": "@eyeseetea/d2-logger",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "DHIS2 library that allows a certain application to register events in a DHIS2 program",
     "author": "EyeSeeTea team <info@eyeseetea.com>",
     "license": "GPL-3.0",
