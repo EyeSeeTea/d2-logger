@@ -31,12 +31,12 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
             programStage: this.getProgramStage(programStageId),
             organisationUnitId: this.getOrganisationUnitId(trackedEntityId, enrollmentId),
         }).flatMap(({ programStage, organisationUnitId }) => {
-            const d2TrackerEvents = this.mapLogToD2TrackerEvents(
+            const d2TrackerEvent = this.mapLogToD2TrackerEvent(
                 log,
                 programStage,
                 organisationUnitId
             );
-            return this.postApiTracker(d2TrackerEvents);
+            return this.postApiTracker(d2TrackerEvent);
         });
     }
 
@@ -83,27 +83,30 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         });
     }
 
-    private mapLogToD2TrackerEvents(
+    private mapLogToD2TrackerEvent(
         log: TrackerProgramLog,
         programStage: D2ProgramStage,
         organisationUnitId: Id
-    ): D2TrackerEvent[] {
+    ): D2TrackerEvent {
         const { programStageId, trackedEntityId, enrollmentId, eventStatus } = log.config;
         const dataValues = this.getDataValuesFromLog(programStage, log.messages, log.messageType);
-        return [
-            {
-                event: "",
-                status:
-                    (eventStatus as EventStatus) || (TRACKER_EVENT_DEFAULT_STATUS as EventStatus), // TODO: remove once d2-api EventStatus has SCHEDULE
-                program: this.trackerProgramId,
-                programStage: programStageId,
-                enrollment: enrollmentId,
-                trackedEntity: trackedEntityId,
-                orgUnit: organisationUnitId,
-                occurredAt: new Date().toISOString(),
-                dataValues: dataValues,
-            },
-        ];
+        const event = {
+            event: "",
+            status: (eventStatus as EventStatus) || (TRACKER_EVENT_DEFAULT_STATUS as EventStatus), // TODO: remove once d2-api EventStatus has SCHEDULE
+            program: this.trackerProgramId,
+            programStage: programStageId,
+            enrollment: enrollmentId,
+            trackedEntity: trackedEntityId,
+            orgUnit: organisationUnitId,
+            occurredAt: new Date().toISOString(),
+            dataValues: dataValues,
+        };
+        return eventStatus === "SCHEDULE"
+            ? {
+                  ...event,
+                  scheduledAt: new Date().toISOString(),
+              }
+            : event;
     }
 
     private getDataValuesFromLog(
@@ -142,14 +145,14 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         );
     }
 
-    private postApiTracker(d2TrackerEvents: D2TrackerEvent[]): FutureData<void> {
+    private postApiTracker(d2TrackerEvent: D2TrackerEvent): FutureData<void> {
         return apiToFuture(
             this.api.tracker.postAsync(
                 {
                     importStrategy: IMPORT_STRATEGY_CREATE,
                     skipRuleEngine: true,
                 },
-                { events: d2TrackerEvents }
+                { events: [d2TrackerEvent] }
             )
         ).flatMap(response => {
             return apiToFuture(

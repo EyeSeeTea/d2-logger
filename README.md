@@ -97,6 +97,7 @@ There are three types of logger output:
             trackedEntityId: "", // Tracked entity Id where register the logs as events
             programStageId: "", // Program Stage Id where register the logs as events
             enrollmentId: "", // Enrollment Id where register the logs as events
+            eventStatus: "", // event status by default is "ACTIVE" if not specified, but it can also be "COMPLETED", "VISITED", "SCHEDULE", "OVERDUE" or "SKIPPED"
         },
         messages: [
             {
@@ -111,6 +112,7 @@ There are three types of logger output:
             trackedEntityId: "", // Tracked entity Id where register the logs as events
             programStageId: "", // Program Stage Id where register the logs as events
             enrollmentId: "", // Enrollment Id where register the logs as events
+            eventStatus: "", // event status by default is "ACTIVE" if not specified, but it can also be "COMPLETED", "VISITED", "SCHEDULE", "OVERDUE" or "SKIPPED"
         },
         messages: [
             {
@@ -125,6 +127,7 @@ There are three types of logger output:
             trackedEntityId: "", // Tracked entity Id where register the logs as events
             programStageId: "", // Program Stage Id where register the logs as events
             enrollmentId: "", // Enrollment Id where register the logs as events
+            eventStatus: "", // event status by default is "ACTIVE" if not specified, but it can also be "COMPLETED", "VISITED", "SCHEDULE", "OVERDUE" or "SKIPPED"
         },
         messages: [
             {
@@ -139,6 +142,7 @@ There are three types of logger output:
             trackedEntityId: "", // Tracked entity Id where register the logs as events
             programStageId: "", // Program Stage Id where register the logs as events
             enrollmentId: "", // Enrollment Id where register the logs as events
+            eventStatus: "", // event status by default is "ACTIVE" if not specified, but it can also be "COMPLETED", "VISITED", "SCHEDULE", "OVERDUE" or "SKIPPED"
         },
         messages: [
             {
@@ -153,6 +157,7 @@ There are three types of logger output:
             trackedEntityId: "", // Tracked entity Id where register the logs as events
             programStageId: "", // Program Stage Id where register the logs as events
             enrollmentId: "", // Enrollment Id where register the logs as events
+            eventStatus: "", // event status by default is "ACTIVE" if not specified, but it can also be "COMPLETED", "VISITED", "SCHEDULE", "OVERDUE" or "SKIPPED"
         },
         messages: [
             {

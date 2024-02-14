@@ -90,6 +90,7 @@ export function getCommand() {
                         trackedEntityId: trackedEntityId,
                         programStageId: programStageId,
                         enrollmentId: enrollmentId,
+                        eventStatus: "COMPLETED",
                     },
                     messages: [{ id: messageId, value: JSON.stringify(info) }],
                 });
