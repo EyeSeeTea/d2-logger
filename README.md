@@ -66,7 +66,7 @@ There are three types of logger output:
 
 3. Using a DHIS2 tracker program to register the logs as events:
 
-    You will need to have and existing tracker program in DHIS2 with the following data elements with value type Text: Message and MessageType. MessageType would be and option set with the following options: "Error", "Warn", "Success", "Info" and "Debug".
+    You will need to have and existing tracker program in DHIS2. In order to be able to log the log type (Error", "Warn", "Success", "Info" and "Debug") in the event, it would be necessary to create a data element and assign it to the program stages, and then add this data element id to the configuration.
 
     Therefore, the following configuration will be passed to the logger:
 
@@ -79,7 +79,7 @@ There are three types of logger output:
         baseUrl: "https://play.dhis2.org/40.2.2",
         auth: "admin:district",
         trackerProgramId: "", // Tracker program Id where register the logs as events
-        messageTypeId: "", // Id of the data element which is the types of message
+        messageTypeId: "", // Id of the data element which is the types of log
     });
     ```
 
@@ -87,7 +87,7 @@ There are three types of logger output:
 
     - Please note that `auth` is not mandatory if it's used in the DHIS2 app instead of in a script.
     - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console.
-    - `messageTypeId` is not mandatory. If the message type is not provided, "Error", "Warn", "Success", "Info" and "Debug" will not be logged in the tracker program.
+    - `messageTypeId` is not mandatory. If the log type is not provided, "Error", "Warn", "Success", "Info" and "Debug" will not be logged in the event.
 
     To log messages:
 
@@ -167,6 +167,11 @@ There are three types of logger output:
         ],
     });
     ```
+
+    Notice:
+
+    - `messages` is an array of objects with the id of the Data Element and a string value. These would be created as Data Values in the event.
+    - `eventStatus` is not mandatory. By deafult "ACTIVE" will be the default status of the event.
 
 ## Development
 
