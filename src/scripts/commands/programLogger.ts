@@ -1,6 +1,6 @@
 import { boolean, command, flag, option, string, subcommands } from "cmd-ts";
 import { AuthString, getD2ApiFromArgs } from "../common";
-import { Logger } from "../..";
+import { initLogger } from "../..";
 
 export function getCommand() {
     const programLogger = command({
@@ -46,8 +46,7 @@ export function getCommand() {
         handler: async args => {
             const { url, auth, orgUnitId, programId, messageTypeId, messageId, debug } = args;
             try {
-                const logger = new Logger();
-                await logger.init({
+                const logger = await initLogger<string>({
                     type: "program",
                     debug: debug,
                     baseUrl: url,
@@ -59,7 +58,8 @@ export function getCommand() {
                         messageTypeId: messageTypeId,
                     },
                 });
-                logger.info("START: Getting DHIS2 instance info");
+
+                await logger.info("START: Getting DHIS2 instance info");
                 const api = getD2ApiFromArgs(args);
                 const info = await api.system.info.getData();
                 logger.success(JSON.stringify(info));

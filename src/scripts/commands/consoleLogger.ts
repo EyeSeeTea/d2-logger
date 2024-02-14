@@ -1,6 +1,6 @@
 import { boolean, command, flag, option, string, subcommands } from "cmd-ts";
 import { AuthString, getD2ApiFromArgs } from "../common";
-import { Logger } from "../..";
+import { initLogger } from "../..";
 
 export function getCommand() {
     const consoleLogger = command({
@@ -25,10 +25,10 @@ export function getCommand() {
         },
         handler: async args => {
             try {
-                const logger = new Logger();
-                logger.init({
+                const logger = await initLogger<string>({
                     type: "console",
                 });
+
                 logger.info("START: Getting DHIS2 instance info");
                 const api = getD2ApiFromArgs(args);
                 const info = await api.system.info.getData();

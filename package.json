@@ -22,7 +22,8 @@
         "release": "bash scripts/publish.sh",
         "test": "vitest",
         "script-program-example": "npx ts-node src/scripts/index.ts programLogger log",
-        "script-console-example": "npx ts-node src/scripts/index.ts consoleLogger log"
+        "script-console-example": "npx ts-node src/scripts/index.ts consoleLogger log",
+        "script-tracker-program-example": "npx ts-node src/scripts/index.ts trackerProgramLogger log"
     },
     "dependencies": {
         "@babel/runtime": "^7.5.4",
