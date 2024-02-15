@@ -29,14 +29,23 @@ export interface Logger<T> {
     error(content: T): Promise<void>;
 }
 
-export async function initLogger<T>(config: LoggerConfig): Promise<Logger<T>> {
+type LoggerType = {
+    program: ProgramLogger;
+    trackerProgram: TrackerProgramLogger;
+    console: ConsoleLogger;
+};
+
+export async function initLogger<Config extends LoggerConfig>(
+    config: Config
+): Promise<LoggerType[Config["type"]]> {
+    type Result = Promise<LoggerType[Config["type"]]>;
+
     switch (config.type) {
         case "program":
-            return ProgramLogger.create(config) as Promise<Logger<T>>;
+            return ProgramLogger.create(config) as Result;
         case "trackerProgram":
-            return TrackerProgramLogger.create(config) as Promise<Logger<T>>;
+            return TrackerProgramLogger.create(config) as Result;
         case "console":
-        default:
-            return ConsoleLogger.create() as Promise<Logger<T>>;
+            return ConsoleLogger.create() as Result;
     }
 }

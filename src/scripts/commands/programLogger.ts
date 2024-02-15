@@ -46,7 +46,7 @@ export function getCommand() {
         handler: async args => {
             const { url, auth, orgUnitId, programId, messageTypeId, messageId, debug } = args;
             try {
-                const logger = await initLogger<string>({
+                const logger = await initLogger({
                     type: "program",
                     debug: debug,
                     baseUrl: url,

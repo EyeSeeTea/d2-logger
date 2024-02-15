@@ -25,7 +25,7 @@ export function getCommand() {
         },
         handler: async args => {
             try {
-                const logger = await initLogger<string>({
+                const logger = await initLogger({
                     type: "console",
                 });
 
