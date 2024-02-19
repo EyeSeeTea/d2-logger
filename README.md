@@ -13,9 +13,9 @@ There are three types of logger output:
     Therefore, the following configuration will be passed to the logger:
 
     ```typescript
-    import { initLogger } from "@eyeseetea/d2-logger";
+    import { initLogger, ProgramLogger } from "@eyeseetea/d2-logger";
 
-    const logger = await initLogger({
+    const logger: ProgramLogger = await initLogger({
         type: "program",
         debug: true,
         baseUrl: "https://play.dhis2.org/40.2.2",
@@ -47,9 +47,9 @@ There are three types of logger output:
 2. Displaying the logs only in the console:
 
     ```typescript
-    import { initLogger } from "@eyeseetea/d2-logger";
+    import { initLogger, ConsoleLogger } from "@eyeseetea/d2-logger";
 
-    const logger = await initLogger({
+    const logger: ConsoleLogger = await initLogger({
         type: "console",
     });
     ```
@@ -71,9 +71,9 @@ There are three types of logger output:
     Therefore, the following configuration will be passed to the logger:
 
     ```typescript
-    import { initLogger } from "@eyeseetea/d2-logger";
+    import { initLogger, TrackerProgramLogger } from "@eyeseetea/d2-logger";
 
-    const logger = await initLogger({
+    const logger: TrackerProgramLogger = await initLogger({
         type: "trackerProgram",
         debug: true,
         baseUrl: "https://play.dhis2.org/40.2.2",

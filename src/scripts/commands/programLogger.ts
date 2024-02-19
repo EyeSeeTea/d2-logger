@@ -1,6 +1,6 @@
 import { boolean, command, flag, option, string, subcommands } from "cmd-ts";
 import { AuthString, getD2ApiFromArgs } from "../common";
-import { initLogger } from "../..";
+import { ProgramLogger, initLogger } from "../..";
 
 export function getCommand() {
     const programLogger = command({
@@ -46,7 +46,7 @@ export function getCommand() {
         handler: async args => {
             const { url, auth, orgUnitId, programId, messageTypeId, messageId, debug } = args;
             try {
-                const logger = await initLogger({
+                const logger: ProgramLogger = await initLogger({
                     type: "program",
                     debug: debug,
                     baseUrl: url,

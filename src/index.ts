@@ -35,7 +35,7 @@ type LoggerType = {
     console: ConsoleLogger;
 };
 
-export async function initLogger<Config extends LoggerConfig>(
+async function initLogger<Config extends LoggerConfig>(
     config: Config
 ): Promise<LoggerType[Config["type"]]> {
     type Result = Promise<LoggerType[Config["type"]]>;
@@ -49,3 +49,5 @@ export async function initLogger<Config extends LoggerConfig>(
             return ConsoleLogger.create() as Result;
     }
 }
+
+export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger };

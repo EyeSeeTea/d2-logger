@@ -1,6 +1,6 @@
 import { boolean, command, flag, option, optional, string, subcommands } from "cmd-ts";
 import { AuthString, getD2ApiFromArgs } from "../common";
-import { initLogger } from "../..";
+import { TrackerProgramLogger, initLogger } from "../..";
 
 export function getCommand() {
     const trackerProgramLogger = command({
@@ -66,7 +66,7 @@ export function getCommand() {
                 debug,
             } = args;
             try {
-                const logger = await initLogger({
+                const logger: TrackerProgramLogger = await initLogger({
                     type: "trackerProgram",
                     debug: debug,
                     baseUrl: url,
