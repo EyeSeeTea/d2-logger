@@ -49,7 +49,10 @@ export class ProgramD2Repository implements ProgramRepository {
                     messageDataElement?.valueType === "TEXT" ||
                     messageDataElement?.valueType === "LONG_TEXT";
 
-                const isMessageTypeDataElementOk = !!messageTypeDataElement?.optionSetValue;
+                const isMessageTypeDataElementOk =
+                    !!messageTypeDataElement?.optionSetValue ||
+                    messageDataElement?.valueType === "TEXT" ||
+                    messageDataElement?.valueType === "LONG_TEXT";
 
                 return Future.success(
                     response.objects[0]?.id === programId &&

@@ -3,6 +3,7 @@ import { run, subcommands } from "cmd-ts";
 
 import * as programLogger from "./commands/programLogger";
 import * as consoleLogger from "./commands/consoleLogger";
+import * as trackerProgramLogger from "./commands/trackerProgramLogger";
 
 export function runCli() {
     const cliSubcommands = subcommands({
@@ -10,6 +11,7 @@ export function runCli() {
         cmds: {
             programLogger: programLogger.getCommand(),
             consoleLogger: consoleLogger.getCommand(),
+            trackerProgramLogger: trackerProgramLogger.getCommand(),
         },
     });
 

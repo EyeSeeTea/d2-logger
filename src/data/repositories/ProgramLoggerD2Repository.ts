@@ -2,7 +2,7 @@ import { D2Api, MetadataPick, D2TrackerEvent, DataValue } from "../../types/d2-a
 import { apiToFuture, FutureData } from "../api-futures";
 import { Future } from "../../domain/entities/generic/Future";
 import { Id } from "../../domain/entities/Base";
-import { Log } from "../../domain/entities/Log";
+import { DefaultLog } from "../../domain/entities/Log";
 import { ProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
@@ -27,7 +27,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         this.organisationUnitId = organisationUnitId;
     }
 
-    log(log: Log): FutureData<void> {
+    log(log: DefaultLog): FutureData<void> {
         return this.getProgramStage().flatMap(programStage => {
             const d2EventProgram = this.mapLogToD2EventProgam({
                 log,
@@ -86,7 +86,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     }
 
     private mapLogToD2EventProgam(params: {
-        log: Log;
+        log: DefaultLog;
         programId: Id;
         organisationUnitId: Id;
         messageId: Id;
@@ -113,7 +113,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     }
 
     private getDataValuesFromLog(params: {
-        log: Log;
+        log: DefaultLog;
         messageId: Id;
         messageTypeId: Id;
         programStage: D2ProgramStage;
@@ -124,7 +124,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             ({ dataElement }) => dataElement.id === messageTypeId
         )?.dataElement;
         const messageTypeDataValue =
-            messageTypeDataElement?.optionSet.options.find(
+            messageTypeDataElement?.optionSet?.options.find(
                 option => option.name === log.messageType || option.code === log.messageType
             )?.code || log.messageType;
 

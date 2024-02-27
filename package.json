@@ -1,7 +1,7 @@
 {
     "name": "@eyeseetea/d2-logger",
-    "version": "0.1.1",
-    "description": "DHIS2 library that allows a certain application to register events in a DHIS2 program",
+    "version": "1.0.0",
+    "description": "DHIS2 library that allows a certain application to register logs as events in a DHIS2 event program, tracker program or simply display logs on the console.",
     "author": "EyeSeeTea team <info@eyeseetea.com>",
     "license": "GPL-3.0",
     "repository": {
@@ -22,7 +22,8 @@
         "release": "bash scripts/publish.sh",
         "test": "vitest",
         "script-program-example": "npx ts-node src/scripts/index.ts programLogger log",
-        "script-console-example": "npx ts-node src/scripts/index.ts consoleLogger log"
+        "script-console-example": "npx ts-node src/scripts/index.ts consoleLogger log",
+        "script-tracker-program-example": "npx ts-node src/scripts/index.ts trackerProgramLogger log"
     },
     "dependencies": {
         "@babel/runtime": "^7.5.4",

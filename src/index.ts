@@ -1,76 +1,53 @@
-import { ProgramLoggerD2Repository } from "./data/repositories/ProgramLoggerD2Repository";
-import { ConsoleLoggerRepository } from "./data/repositories/ConsoleLoggerRepository";
-import { LoggerConfig, ProgramLoggerConfig } from "./domain/entities/LoggerConfig";
-import { MessageType } from "./domain/entities/Log";
-import { CheckConfigProgramLoggerUseCase } from "./domain/usecases/CheckConfigProgramLoggerUseCase";
-import { LogMessageUseCase } from "./domain/usecases/LogMessageUseCase";
-import { LoggerRepository } from "./domain/repositories/LoggerRepository";
-import { ProgramRepository } from "./domain/repositories/ProgramRepository";
-import { ProgramD2Repository } from "./data/repositories/ProgramD2Repository";
+import { Id } from "./domain/entities/Base";
+import { LoggerConfig } from "./domain/entities/LoggerConfig";
+import { ConsoleLogger } from "./loggers/ConsoleLogger";
+import { ProgramLogger } from "./loggers/ProgramLogger";
+import { TrackerProgramLogger } from "./loggers/TrackerProgramLogger";
 
-export class Logger {
-    isDebug: boolean | undefined;
-    programRepository: ProgramRepository | undefined;
-    loggerRepository: LoggerRepository | undefined;
+export type TrackerProgramContent = {
+    config: TrackerProgramMessageConfig;
+    messages: TrackerProgramMessages[];
+};
 
-    async init(config: LoggerConfig): Promise<void> {
-        this.isDebug = config.debug ?? false;
-        switch (config.type) {
-            case "program":
-                return await this.configProgramLogger(config);
-            case "console":
-                return this.configConsoleLogger();
-            default:
-                return await this.configProgramLogger(config);
-        }
-    }
+type TrackerProgramMessageConfig = {
+    trackedEntityId: Id;
+    programStageId: Id;
+    enrollmentId: Id;
+    eventStatus?: "ACTIVE" | "COMPLETED" | "VISITED" | "SCHEDULE" | "OVERDUE" | "SKIPPED";
+};
 
-    debug(message: string): Promise<void> {
-        return this.log(message, "Debug");
-    }
+type TrackerProgramMessages = {
+    id: Id;
+    value: string;
+};
 
-    info(message: string): Promise<void> {
-        return this.log(message, "Info");
-    }
+export interface Logger<T> {
+    debug(content: T): Promise<void>;
+    info(content: T): Promise<void>;
+    success(content: T): Promise<void>;
+    warn(content: T): Promise<void>;
+    error(content: T): Promise<void>;
+}
 
-    success(message: string): Promise<void> {
-        return this.log(message, "Success");
-    }
+type LoggerType = {
+    program: ProgramLogger;
+    trackerProgram: TrackerProgramLogger;
+    console: ConsoleLogger;
+};
 
-    warn(message: string): Promise<void> {
-        return this.log(message, "Warn");
-    }
+async function initLogger<Config extends LoggerConfig>(
+    config: Config
+): Promise<LoggerType[Config["type"]]> {
+    type Result = Promise<LoggerType[Config["type"]]>;
 
-    error(message: string): Promise<void> {
-        return this.log(message, "Error");
-    }
-
-    private log(message: string, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            return new LogMessageUseCase(this.loggerRepository)
-                .execute({ message: message, messageType: messageType }, options)
-                .toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
-    }
-
-    private async configProgramLogger(config: ProgramLoggerConfig): Promise<void> {
-        this.programRepository = new ProgramD2Repository();
-        const isConfigOk = await new CheckConfigProgramLoggerUseCase(this.programRepository)
-            .execute(config)
-            .toPromise();
-        if (isConfigOk) {
-            this.loggerRepository = new ProgramLoggerD2Repository(config);
-        } else {
-            throw new Error(
-                `Logger not initialized properly. Please check program and data elements configuration.`
-            );
-        }
-    }
-
-    private configConsoleLogger(): void {
-        this.loggerRepository = new ConsoleLoggerRepository();
+    switch (config.type) {
+        case "program":
+            return ProgramLogger.create(config) as Result;
+        case "trackerProgram":
+            return TrackerProgramLogger.create(config) as Result;
+        case "console":
+            return ConsoleLogger.create() as Result;
     }
 }
+
+export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger };

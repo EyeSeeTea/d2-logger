@@ -1,10 +1,10 @@
 import { FutureData } from "../../data/api-futures";
 import { Future } from "../../domain/entities/generic/Future";
-import { Log } from "../../domain/entities/Log";
+import { DefaultLog } from "../../domain/entities/Log";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
 export class ConsoleLoggerRepository implements LoggerRepository {
-    log(log: Log): FutureData<void> {
+    log(log: DefaultLog): FutureData<void> {
         const { message, messageType } = log;
         const date = new Date().toISOString();
         process.stderr.write(`[${messageType.toUpperCase()}] [${date}] ${message}\n`);

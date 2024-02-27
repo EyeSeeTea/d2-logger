@@ -5,7 +5,7 @@ interface LoggerConfigBase {
     debug?: boolean;
 }
 
-export type LoggerConfig = ProgramLoggerConfig | ConsoleLoggerConfig;
+export type LoggerConfig = ProgramLoggerConfig | ConsoleLoggerConfig | TrackerProgramLoggerConfig;
 
 export interface ConsoleLoggerConfig extends LoggerConfigBase {
     type: "console";
@@ -29,3 +29,11 @@ export type DataElements = {
     messageId: Id;
     messageTypeId: Id;
 };
+
+export interface TrackerProgramLoggerConfig extends LoggerConfigBase {
+    type: "trackerProgram";
+    baseUrl: string;
+    auth: Maybe<Auth>;
+    trackerProgramId: Id;
+    messageTypeId: Maybe<Id>;
+}
