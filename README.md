@@ -19,7 +19,10 @@ There are three types of logger output:
         type: "program",
         debug: true,
         baseUrl: "https://play.dhis2.org/40.2.2",
-        auth: "admin:district",
+        auth: {
+            username: "admin",
+            password: "district",
+        },
         organisationUnitId: "", // Organisation unit Id where the program is registered
         programId: "", // Event program Id where register the logs as events
         dataElements: {
@@ -77,7 +80,10 @@ There are three types of logger output:
         type: "trackerProgram",
         debug: true,
         baseUrl: "https://play.dhis2.org/40.2.2",
-        auth: "admin:district",
+        auth: {
+            username: "admin",
+            password: "district",
+        },
         trackerProgramId: "", // Tracker program Id where register the logs as events
         messageTypeId: "", // Id of the data element which is the types of log
     });
