@@ -3,6 +3,7 @@ import { LoggerConfig } from "./domain/entities/LoggerConfig";
 import { ConsoleLogger } from "./loggers/ConsoleLogger";
 import { ProgramLogger } from "./loggers/ProgramLogger";
 import { TrackerProgramLogger } from "./loggers/TrackerProgramLogger";
+import { MultipleLogContent } from "./domain/entities/MultipleLogContent";
 
 export type TrackerProgramContent = {
     config: TrackerProgramMessageConfig;
@@ -27,6 +28,7 @@ export interface Logger<T> {
     success(content: T): Promise<void>;
     warn(content: T): Promise<void>;
     error(content: T): Promise<void>;
+    logMultiple(content: MultipleLogContent): Promise<void>;
 }
 
 type LoggerType = {
@@ -50,4 +52,4 @@ async function initLogger<Config extends LoggerConfig>(
     }
 }
 
-export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger };
+export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger, MultipleLogContent };
