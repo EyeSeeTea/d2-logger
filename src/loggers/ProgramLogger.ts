@@ -17,8 +17,7 @@ export class ProgramLogger implements Logger<string> {
             .execute(config)
             .toPromise();
         if (isConfigOk) {
-            const loggerRepository = new ProgramLoggerD2Repository(config);
-            await loggerRepository.init();
+            const loggerRepository = await ProgramLoggerD2Repository.init(config);
             return new ProgramLogger(loggerRepository, config.debug);
         } else {
             throw new Error(

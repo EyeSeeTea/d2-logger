@@ -5,7 +5,6 @@ import { Id } from "../../domain/entities/Base";
 import { DefaultLog } from "../../domain/entities/Log";
 import { ProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
-import { Maybe } from "../../utils/ts-utils";
 
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
@@ -17,9 +16,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     programId: Id;
     messageId: Id;
     messageTypeId: Id;
-    private programStage: Maybe<D2ProgramStage>;
+    programStage: D2ProgramStage;
 
-    constructor(config: ProgramLoggerConfig) {
+    constructor(config: ProgramLoggerConfig, d2ProgramStage: D2ProgramStage) {
         const { baseUrl, auth, programId, dataElements, organisationUnitId } = config;
 
         this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
@@ -27,11 +26,34 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         this.messageId = dataElements.messageId;
         this.messageTypeId = dataElements.messageTypeId;
         this.organisationUnitId = organisationUnitId;
-        this.programStage = undefined;
+        this.programStage = d2ProgramStage;
     }
 
-    async init(): Promise<void> {
-        this.programStage = await this.getProgramStage().toPromise();
+    static async init(config: ProgramLoggerConfig): Promise<ProgramLoggerD2Repository> {
+        const api = new D2Api({ baseUrl: config.baseUrl, auth: config.auth });
+        const d2ProgramStage = await ProgramLoggerD2Repository.getProgramStage(
+            api,
+            config.programId
+        ).toPromise();
+        return new ProgramLoggerD2Repository(config, d2ProgramStage);
+    }
+
+    static getProgramStage(api: D2Api, programId: Id): FutureData<D2ProgramStage> {
+        return apiToFuture(
+            api.models.programs.get({
+                fields: programFields,
+                filter: { id: { eq: programId } },
+            })
+        ).flatMap(response => {
+            const programStage = response.objects[0]?.programStages[0];
+            if (programStage) {
+                return Future.success(programStage);
+            } else {
+                return Future.error(
+                    new Error(`Program stage of program with id ${programId} not found`)
+                );
+            }
+        });
     }
 
     log(log: DefaultLog): FutureData<void> {
@@ -40,50 +62,20 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         }
 
         const d2EventProgram = this.mapLogToD2EventProgam({
+            ...this,
             log,
-            programId: this.programId,
-            organisationUnitId: this.organisationUnitId,
-            messageId: this.messageId,
-            messageTypeId: this.messageTypeId,
-            programStage: this.programStage,
         });
         return this.postApiTracker([d2EventProgram]);
     }
 
     batchLog(logs: DefaultLog[]): FutureData<void> {
-        if (!this.programStage) {
-            return Future.success(undefined);
-        }
-        const programStage = this.programStage;
         const d2EventsProgram = logs.map(log =>
             this.mapLogToD2EventProgam({
+                ...this,
                 log,
-                programId: this.programId,
-                organisationUnitId: this.organisationUnitId,
-                messageId: this.messageId,
-                messageTypeId: this.messageTypeId,
-                programStage: programStage,
             })
         );
         return this.postApiTracker(d2EventsProgram);
-    }
-
-    private getProgramStage(): FutureData<D2ProgramStage> {
-        return apiToFuture(
-            this.api.models.programs.get({
-                fields: programFields,
-                filter: { id: { eq: this.programId } },
-            })
-        ).flatMap(response => {
-            const programStage = response.objects[0]?.programStages[0];
-            if (programStage) {
-                return Future.success(programStage);
-            } else {
-                return Future.error(
-                    new Error(`Program stage of program with id ${this.programId} not found`)
-                );
-            }
-        });
     }
 
     private postApiTracker(d2EventsProgram: D2TrackerEvent[]): FutureData<void> {
