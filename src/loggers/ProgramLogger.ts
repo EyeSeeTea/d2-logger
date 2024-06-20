@@ -47,27 +47,17 @@ export class ProgramLogger implements Logger<string> {
     }
 
     batchLog(content: BatchLogContent): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            const logs = content.map(content =>
-                this.mapContentToLog(content.content, content.messageType)
-            );
-            return new BatchLogMessageUseCase(this.loggerRepository)
-                .execute(logs, options)
-                .toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const options = { isDebug: this.isDebug };
+        const logs = content.map(content =>
+            this.mapContentToLog(content.content, content.messageType)
+        );
+        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs, options).toPromise();
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            const log = this.mapContentToLog(content, messageType);
-            return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const options = { isDebug: this.isDebug };
+        const log = this.mapContentToLog(content, messageType);
+        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
     }
 
     private mapContentToLog(content: string, messageType: MessageType): DefaultLog {

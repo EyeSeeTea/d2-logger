@@ -54,13 +54,9 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
     }
 
     private log(content: TrackerProgramContent, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            const log = this.mapContentToLog(content, messageType);
-            return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const options = { isDebug: this.isDebug };
+        const log = this.mapContentToLog(content, messageType);
+        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
     }
 
     private mapContentToLog(

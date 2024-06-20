@@ -35,24 +35,16 @@ export class ConsoleLogger implements Logger<string> {
     }
 
     batchLog(content: BatchLogContent): Promise<void> {
-        if (this.loggerRepository) {
-            const logs = content.map(content =>
-                this.mapContentToLog(content.content, content.messageType)
-            );
-            return new BatchLogMessageUseCase(this.loggerRepository).execute(logs).toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const logs = content.map(content =>
+            this.mapContentToLog(content.content, content.messageType)
+        );
+        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs).toPromise();
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            return new LogMessageUseCase(this.loggerRepository)
-                .execute({ message: content, messageType: messageType })
-                .toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        return new LogMessageUseCase(this.loggerRepository)
+            .execute({ message: content, messageType: messageType })
+            .toPromise();
     }
 
     private mapContentToLog(content: string, messageType: MessageType): DefaultLog {
