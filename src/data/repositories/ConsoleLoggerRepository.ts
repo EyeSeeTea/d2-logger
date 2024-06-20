@@ -5,14 +5,15 @@ import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
 export class ConsoleLoggerRepository implements LoggerRepository {
     batchLog(logs: DefaultLog[]): FutureData<void> {
-        logs.map(log => this.log(log));
-        return Future.success(undefined);
+        const logs$ = logs.map(log => this.log(log));
+        return Future.sequential(logs$).map(() => undefined);
     }
 
     log(log: DefaultLog): FutureData<void> {
         const { message, messageType } = log;
-        const date = new Date().toISOString();
-        process.stderr.write(`[${messageType.toUpperCase()}] [${date}] ${message}\n`);
-        return Future.success(undefined);
+        return Future.success<Error, void>(undefined).tap(() => {
+            const date = new Date().toISOString();
+            process.stderr.write(`[${messageType.toUpperCase()}] [${date}] ${message}\n`);
+        });
     }
 }

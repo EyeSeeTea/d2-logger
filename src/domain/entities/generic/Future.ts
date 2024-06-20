@@ -81,6 +81,13 @@ export class Future<E, D> {
         return this._promise();
     }
 
+    tap(effectFn: (data: D) => void): Future<E, D> {
+        return this.map(data => {
+            effectFn(data);
+            return data;
+        });
+    }
+
     static join2<E, T, S>(async1: Future<E, T>, async2: Future<E, S>): Future<E, [T, S]> {
         return new Future(() => {
             return rcpromise.CancellablePromise.all<T, S>([async1._promise(), async2._promise()]);
