@@ -8,6 +8,7 @@ import { TrackerProgramD2Repository } from "../data/repositories/TrackerProgramD
 import { TrackerProgramLoggerD2Repository } from "../data/repositories/TrackerProgramLoggerD2Repository";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
+// TODO: homogenize the use of Promises or Futures
 export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
 

@@ -9,6 +9,7 @@ import { ProgramLoggerD2Repository } from "../data/repositories/ProgramLoggerD2R
 import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
+// TODO: homogenize the use of Promises or Futures
 export class ProgramLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
 

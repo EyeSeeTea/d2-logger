@@ -6,6 +6,7 @@ import { ConsoleLoggerRepository } from "../data/repositories/ConsoleLoggerRepos
 import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
+// TODO: homogenize the use of Promises or Futures
 export class ConsoleLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository) {}
 
