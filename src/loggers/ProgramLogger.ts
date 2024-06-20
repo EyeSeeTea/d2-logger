@@ -1,5 +1,5 @@
 import { Logger } from "..";
-import { DefaultLog, MessageType } from "../domain/entities/Log";
+import { MessageType } from "../domain/entities/Log";
 import { ProgramLoggerConfig } from "../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../domain/repositories/LoggerRepository";
 import { CheckConfigProgramLoggerUseCase } from "../domain/usecases/CheckConfigProgramLoggerUseCase";
@@ -8,6 +8,7 @@ import { ProgramD2Repository } from "../data/repositories/ProgramD2Repository";
 import { ProgramLoggerD2Repository } from "../data/repositories/ProgramLoggerD2Repository";
 import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
+import { mapContentToLog } from "./utils/mapContentToLog";
 
 // TODO: homogenize the use of Promises or Futures
 export class ProgramLogger implements Logger<string> {
@@ -49,19 +50,13 @@ export class ProgramLogger implements Logger<string> {
 
     batchLog(content: BatchLogContent): Promise<void> {
         const options = { isDebug: this.isDebug };
-        const logs = content.map(content =>
-            this.mapContentToLog(content.content, content.messageType)
-        );
+        const logs = content.map(content => mapContentToLog(content.content, content.messageType));
         return new BatchLogMessageUseCase(this.loggerRepository).execute(logs, options).toPromise();
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
         const options = { isDebug: this.isDebug };
-        const log = this.mapContentToLog(content, messageType);
+        const log = mapContentToLog(content, messageType);
         return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
-    }
-
-    private mapContentToLog(content: string, messageType: MessageType): DefaultLog {
-        return { message: content, messageType: messageType };
     }
 }
