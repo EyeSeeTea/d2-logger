@@ -1,3 +1,4 @@
 import { MessageType } from "./Log";
 
-export type BatchLogContent = { content: string; messageType: MessageType }[];
+type LogContent = { content: string; messageType: MessageType };
+export type BatchLogContent = LogContent[];
