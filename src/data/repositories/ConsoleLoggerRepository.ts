@@ -8,6 +8,7 @@ export class ConsoleLoggerRepository implements LoggerRepository {
         logs.map(log => this.log(log));
         return Future.success(undefined);
     }
+
     log(log: DefaultLog): FutureData<void> {
         const { message, messageType } = log;
         const date = new Date().toISOString();
