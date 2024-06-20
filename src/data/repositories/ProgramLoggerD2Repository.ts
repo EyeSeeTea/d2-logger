@@ -50,7 +50,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         return this.postApiTracker([d2EventProgram]);
     }
 
-    logMultiple(logs: DefaultLog[]): FutureData<void> {
+    batchLog(logs: DefaultLog[]): FutureData<void> {
         if (!this.programStage) {
             return Future.success(undefined);
         }

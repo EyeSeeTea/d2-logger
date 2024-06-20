@@ -3,8 +3,8 @@ import { DefaultLog, MessageType } from "../domain/entities/Log";
 import { LoggerRepository } from "../domain/repositories/LoggerRepository";
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { ConsoleLoggerRepository } from "../data/repositories/ConsoleLoggerRepository";
-import { MultipleLogContent } from "../domain/entities/MultipleLogContent";
-import { LogMultipleMessageUseCase } from "../domain/usecases/LogMultipleMessageUseCase";
+import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
 export class ConsoleLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository) {}
@@ -34,12 +34,12 @@ export class ConsoleLogger implements Logger<string> {
         return this.log(content, "Error");
     }
 
-    logMultiple(content: MultipleLogContent): Promise<void> {
+    batchLog(content: BatchLogContent): Promise<void> {
         if (this.loggerRepository) {
-            const logs = content.map(({ content, messageType }) =>
-                this.mapContentToLog(content, messageType)
+            const logs = content.map(content =>
+                this.mapContentToLog(content.content, content.messageType)
             );
-            return new LogMultipleMessageUseCase(this.loggerRepository).execute(logs).toPromise();
+            return new BatchLogMessageUseCase(this.loggerRepository).execute(logs).toPromise();
         } else {
             throw new Error(`Logger not initialized properly. Please check configuration.`);
         }

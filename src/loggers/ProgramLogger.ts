@@ -6,8 +6,8 @@ import { CheckConfigProgramLoggerUseCase } from "../domain/usecases/CheckConfigP
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { ProgramD2Repository } from "../data/repositories/ProgramD2Repository";
 import { ProgramLoggerD2Repository } from "../data/repositories/ProgramLoggerD2Repository";
-import { LogMultipleMessageUseCase } from "../domain/usecases/LogMultipleMessageUseCase";
-import { MultipleLogContent } from "../domain/entities/MultipleLogContent";
+import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
 export class ProgramLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
@@ -47,8 +47,18 @@ export class ProgramLogger implements Logger<string> {
         return this.log(content, "Error");
     }
 
-    logMultiple(content: MultipleLogContent): Promise<void> {
-        return this.logMultipleMessages(content);
+    batchLog(content: BatchLogContent): Promise<void> {
+        if (this.loggerRepository) {
+            const options = { isDebug: this.isDebug };
+            const logs = content.map(content =>
+                this.mapContentToLog(content.content, content.messageType)
+            );
+            return new BatchLogMessageUseCase(this.loggerRepository)
+                .execute(logs, options)
+                .toPromise();
+        } else {
+            throw new Error(`Logger not initialized properly. Please check configuration.`);
+        }
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
@@ -56,20 +66,6 @@ export class ProgramLogger implements Logger<string> {
             const options = { isDebug: this.isDebug };
             const log = this.mapContentToLog(content, messageType);
             return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
-    }
-
-    private logMultipleMessages(content: MultipleLogContent): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            const logs = content.map(({ content, messageType }) =>
-                this.mapContentToLog(content, messageType)
-            );
-            return new LogMultipleMessageUseCase(this.loggerRepository)
-                .execute(logs, options)
-                .toPromise();
         } else {
             throw new Error(`Logger not initialized properly. Please check configuration.`);
         }

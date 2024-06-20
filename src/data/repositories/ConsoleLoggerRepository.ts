@@ -4,7 +4,7 @@ import { DefaultLog } from "../../domain/entities/Log";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
 export class ConsoleLoggerRepository implements LoggerRepository {
-    logMultiple(logs: DefaultLog[]): FutureData<void> {
+    batchLog(logs: DefaultLog[]): FutureData<void> {
         logs.map(log => this.log(log));
         return Future.success(undefined);
     }

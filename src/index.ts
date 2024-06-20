@@ -1,9 +1,9 @@
 import { Id } from "./domain/entities/Base";
+import { BatchLogContent } from "./domain/entities/BatchLogContent";
 import { LoggerConfig } from "./domain/entities/LoggerConfig";
 import { ConsoleLogger } from "./loggers/ConsoleLogger";
 import { ProgramLogger } from "./loggers/ProgramLogger";
 import { TrackerProgramLogger } from "./loggers/TrackerProgramLogger";
-import { MultipleLogContent } from "./domain/entities/MultipleLogContent";
 
 export type TrackerProgramContent = {
     config: TrackerProgramMessageConfig;
@@ -28,7 +28,7 @@ export interface Logger<T> {
     success(content: T): Promise<void>;
     warn(content: T): Promise<void>;
     error(content: T): Promise<void>;
-    logMultiple(content: MultipleLogContent): Promise<void>;
+    batchLog(content: BatchLogContent): Promise<void>;
 }
 
 type LoggerType = {
@@ -52,4 +52,4 @@ async function initLogger<Config extends LoggerConfig>(
     }
 }
 
-export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger, MultipleLogContent };
+export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger, BatchLogContent };

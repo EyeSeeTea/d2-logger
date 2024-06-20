@@ -1,8 +1,8 @@
 import { FutureData } from "../../data/api-futures";
-import { Log } from "../../domain/entities/Log";
-import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
+import { Log } from "../entities/Log";
+import { LoggerRepository } from "../repositories/LoggerRepository";
 
-export class LogMultipleMessageUseCase {
+export class BatchLogMessageUseCase {
     constructor(private loggerRepository: LoggerRepository) {}
 
     public execute(logs: Log[], options?: { isDebug?: boolean }): FutureData<void> {
@@ -10,6 +10,6 @@ export class LogMultipleMessageUseCase {
             // eslint-disable-next-line no-console
             console.log(logs);
         }
-        return this.loggerRepository.logMultiple(logs);
+        return this.loggerRepository.batchLog(logs);
     }
 }

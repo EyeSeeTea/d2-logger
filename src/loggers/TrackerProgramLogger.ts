@@ -6,7 +6,7 @@ import { CheckConfigProgramLoggerUseCase } from "../domain/usecases/CheckConfigP
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { TrackerProgramD2Repository } from "../data/repositories/TrackerProgramD2Repository";
 import { TrackerProgramLoggerD2Repository } from "../data/repositories/TrackerProgramLoggerD2Repository";
-import { MultipleLogContent } from "../domain/entities/MultipleLogContent";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
 export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
@@ -48,8 +48,8 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
         return this.log(content, "Error");
     }
 
-    // TODO: implement logMultiple method
-    logMultiple(_content: MultipleLogContent): Promise<void> {
+    // TODO: implement batchLog method
+    batchLog(_content: BatchLogContent): Promise<void> {
         throw new Error("Method not implemented in Tracker Program Logger yet");
     }
 

@@ -30,8 +30,8 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         this.messageTypeId = messageTypeId;
     }
 
-    // TODO: implement logMultiple method
-    logMultiple(_logs: Log[]): FutureData<void> {
+    // TODO: implement batchLog method
+    batchLog(_logs: Log[]): FutureData<void> {
         return Future.success(undefined);
     }
 
