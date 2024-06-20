@@ -7,8 +7,7 @@ export class BatchLogMessageUseCase {
 
     public execute(logs: Log[], options?: { isDebug?: boolean }): FutureData<void> {
         if (options?.isDebug) {
-            // eslint-disable-next-line no-console
-            console.log(logs);
+            console.debug(logs);
         }
         return this.loggerRepository.batchLog(logs);
     }
