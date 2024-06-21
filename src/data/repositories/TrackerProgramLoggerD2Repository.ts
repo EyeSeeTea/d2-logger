@@ -3,7 +3,12 @@ import { D2Api, MetadataPick, D2TrackerEvent, DataValue } from "../../types/d2-a
 import { apiToFuture, FutureData } from "../api-futures";
 import { Future } from "../../domain/entities/generic/Future";
 import { Id } from "../../domain/entities/Base";
-import { TrackerProgramLog, MessageType, TrackerProgramMessages } from "../../domain/entities/Log";
+import {
+    TrackerProgramLog,
+    MessageType,
+    TrackerProgramMessages,
+    Log,
+} from "../../domain/entities/Log";
 import { TrackerProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
 
@@ -23,6 +28,11 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
         this.trackerProgramId = trackerProgramId;
         this.messageTypeId = messageTypeId;
+    }
+
+    // TODO: implement batchLog method
+    batchLog(_logs: Log[]): FutureData<void> {
+        return Future.success(undefined);
     }
 
     log(log: TrackerProgramLog): FutureData<void> {

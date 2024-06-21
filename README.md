@@ -37,7 +37,7 @@ There are three types of logger output:
     - Please note that `auth` is not mandatory if it's used in the DHIS2 app instead of in a script.
     - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console.
 
-    To log messages:
+    To log messages as single events:
 
     ```typescript
     logger.debug("This is a Debug message");
@@ -45,6 +45,18 @@ There are three types of logger output:
     logger.success("This is a Success message");
     logger.warn("This is a Warn message");
     logger.error("This is an Error message");
+    ```
+
+    To log messages in batch and create several events at once:
+
+    ```typescript
+    logger.batchLog([
+        { content: "This is a Debug message", messageType: "Debug" },
+        { content: "This is a Info message", messageType: "Info" },
+        { content: "This is a Success message", messageType: "Success" },
+        { content: "This is a Warn message", messageType: "Warn" },
+        { content: "This is a Debug message", messageType: "Error" },
+    ]);
     ```
 
 2. Displaying the logs only in the console:
@@ -65,6 +77,18 @@ There are three types of logger output:
     logger.success("This is a Success message");
     logger.warn("This is a Warn message");
     logger.error("This is an Error message");
+    ```
+
+    To log messages in batch:
+
+    ```typescript
+    logger.batchLog([
+        { content: "This is a Debug message", messageType: "Debug" },
+        { content: "This is a Info message", messageType: "Info" },
+        { content: "This is a Success message", messageType: "Success" },
+        { content: "This is a Warn message", messageType: "Warn" },
+        { content: "This is a Debug message", messageType: "Error" },
+    ]);
     ```
 
 3. Using a DHIS2 tracker program to register the logs as events:

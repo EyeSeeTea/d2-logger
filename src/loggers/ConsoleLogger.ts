@@ -3,7 +3,11 @@ import { MessageType } from "../domain/entities/Log";
 import { LoggerRepository } from "../domain/repositories/LoggerRepository";
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { ConsoleLoggerRepository } from "../data/repositories/ConsoleLoggerRepository";
+import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
+import { mapContentToLog } from "./utils/mapContentToLog";
 
+// TODO: homogenize the use of Promises or Futures
 export class ConsoleLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository) {}
 
@@ -32,13 +36,14 @@ export class ConsoleLogger implements Logger<string> {
         return this.log(content, "Error");
     }
 
+    batchLog(content: BatchLogContent): Promise<void> {
+        const logs = content.map(content => mapContentToLog(content.content, content.messageType));
+        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs).toPromise();
+    }
+
     private log(content: string, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            return new LogMessageUseCase(this.loggerRepository)
-                .execute({ message: content, messageType: messageType })
-                .toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        return new LogMessageUseCase(this.loggerRepository)
+            .execute({ message: content, messageType: messageType })
+            .toPromise();
     }
 }

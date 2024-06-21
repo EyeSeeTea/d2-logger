@@ -7,8 +7,7 @@ export class LogMessageUseCase {
 
     public execute(log: Log, options?: { isDebug?: boolean }): FutureData<void> {
         if (options?.isDebug) {
-            // eslint-disable-next-line no-console
-            console.log(log);
+            console.debug(log);
         }
         return this.loggerRepository.log(log);
     }
