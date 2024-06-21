@@ -6,7 +6,11 @@ import { CheckConfigProgramLoggerUseCase } from "../domain/usecases/CheckConfigP
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { ProgramD2Repository } from "../data/repositories/ProgramD2Repository";
 import { ProgramLoggerD2Repository } from "../data/repositories/ProgramLoggerD2Repository";
+import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
+import { mapContentToLog } from "./utils/mapContentToLog";
 
+// TODO: homogenize the use of Promises or Futures
 export class ProgramLogger implements Logger<string> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
 
@@ -15,7 +19,7 @@ export class ProgramLogger implements Logger<string> {
             .execute(config)
             .toPromise();
         if (isConfigOk) {
-            const loggerRepository = new ProgramLoggerD2Repository(config);
+            const loggerRepository = await ProgramLoggerD2Repository.init(config);
             return new ProgramLogger(loggerRepository, config.debug);
         } else {
             throw new Error(
@@ -44,14 +48,15 @@ export class ProgramLogger implements Logger<string> {
         return this.log(content, "Error");
     }
 
+    batchLog(content: BatchLogContent): Promise<void> {
+        const options = { isDebug: this.isDebug };
+        const logs = content.map(content => mapContentToLog(content.content, content.messageType));
+        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs, options).toPromise();
+    }
+
     private log(content: string, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            return new LogMessageUseCase(this.loggerRepository)
-                .execute({ message: content, messageType: messageType }, options)
-                .toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const options = { isDebug: this.isDebug };
+        const log = mapContentToLog(content, messageType);
+        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
     }
 }

@@ -6,7 +6,9 @@ import { CheckConfigProgramLoggerUseCase } from "../domain/usecases/CheckConfigP
 import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { TrackerProgramD2Repository } from "../data/repositories/TrackerProgramD2Repository";
 import { TrackerProgramLoggerD2Repository } from "../data/repositories/TrackerProgramLoggerD2Repository";
+import { BatchLogContent } from "../domain/entities/BatchLogContent";
 
+// TODO: homogenize the use of Promises or Futures
 export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
     private constructor(private loggerRepository: LoggerRepository, private isDebug?: boolean) {}
 
@@ -47,14 +49,15 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
         return this.log(content, "Error");
     }
 
+    // TODO: implement batchLog method
+    batchLog(_content: BatchLogContent): Promise<void> {
+        throw new Error("Method not implemented in Tracker Program Logger yet");
+    }
+
     private log(content: TrackerProgramContent, messageType: MessageType): Promise<void> {
-        if (this.loggerRepository) {
-            const options = { isDebug: this.isDebug };
-            const log = this.mapContentToLog(content, messageType);
-            return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
-        } else {
-            throw new Error(`Logger not initialized properly. Please check configuration.`);
-        }
+        const options = { isDebug: this.isDebug };
+        const log = this.mapContentToLog(content, messageType);
+        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
     }
 
     private mapContentToLog(

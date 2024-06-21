@@ -3,4 +3,5 @@ import { Log } from "../../domain/entities/Log";
 
 export interface LoggerRepository {
     log(log: Log): FutureData<void>;
+    batchLog(logs: Log[]): FutureData<void>;
 }

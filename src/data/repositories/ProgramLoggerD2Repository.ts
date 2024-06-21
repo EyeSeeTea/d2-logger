@@ -16,8 +16,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     programId: Id;
     messageId: Id;
     messageTypeId: Id;
+    programStage: D2ProgramStage;
 
-    constructor(config: ProgramLoggerConfig) {
+    constructor(config: ProgramLoggerConfig, d2ProgramStage: D2ProgramStage) {
         const { baseUrl, auth, programId, dataElements, organisationUnitId } = config;
 
         this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
@@ -25,27 +26,23 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         this.messageId = dataElements.messageId;
         this.messageTypeId = dataElements.messageTypeId;
         this.organisationUnitId = organisationUnitId;
+        this.programStage = d2ProgramStage;
     }
 
-    log(log: DefaultLog): FutureData<void> {
-        return this.getProgramStage().flatMap(programStage => {
-            const d2EventProgram = this.mapLogToD2EventProgam({
-                log,
-                programId: this.programId,
-                organisationUnitId: this.organisationUnitId,
-                messageId: this.messageId,
-                messageTypeId: this.messageTypeId,
-                programStage,
-            });
-            return this.postApiTracker(d2EventProgram);
-        });
+    static async init(config: ProgramLoggerConfig): Promise<ProgramLoggerD2Repository> {
+        const api = new D2Api({ baseUrl: config.baseUrl, auth: config.auth });
+        const d2ProgramStage = await ProgramLoggerD2Repository.getProgramStage(
+            api,
+            config.programId
+        ).toPromise();
+        return new ProgramLoggerD2Repository(config, d2ProgramStage);
     }
 
-    private getProgramStage(): FutureData<D2ProgramStage> {
+    static getProgramStage(api: D2Api, programId: Id): FutureData<D2ProgramStage> {
         return apiToFuture(
-            this.api.models.programs.get({
+            api.models.programs.get({
                 fields: programFields,
-                filter: { id: { eq: this.programId } },
+                filter: { id: { eq: programId } },
             })
         ).flatMap(response => {
             const programStage = response.objects[0]?.programStages[0];
@@ -53,20 +50,42 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
                 return Future.success(programStage);
             } else {
                 return Future.error(
-                    new Error(`Program stage of program with id ${this.programId} not found`)
+                    new Error(`Program stage of program with id ${programId} not found`)
                 );
             }
         });
     }
 
-    private postApiTracker(d2EventProgram: D2TrackerEvent): FutureData<void> {
+    log(log: DefaultLog): FutureData<void> {
+        if (!this.programStage) {
+            return Future.success(undefined);
+        }
+
+        const d2EventProgram = this.mapLogToD2EventProgam({
+            ...this,
+            log,
+        });
+        return this.postApiTracker([d2EventProgram]);
+    }
+
+    batchLog(logs: DefaultLog[]): FutureData<void> {
+        const d2EventsProgram = logs.map(log =>
+            this.mapLogToD2EventProgam({
+                ...this,
+                log,
+            })
+        );
+        return this.postApiTracker(d2EventsProgram);
+    }
+
+    private postApiTracker(d2EventsProgram: D2TrackerEvent[]): FutureData<void> {
         return apiToFuture(
             this.api.tracker.postAsync(
                 {
                     importStrategy: IMPORT_STRATEGY_CREATE,
                     skipRuleEngine: true,
                 },
-                { events: [d2EventProgram] }
+                { events: d2EventsProgram }
             )
         ).flatMap(response => {
             return apiToFuture(
