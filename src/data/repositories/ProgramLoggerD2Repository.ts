@@ -34,7 +34,16 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         const d2ProgramStage = await ProgramLoggerD2Repository.getProgramStage(
             api,
             config.programId
-        ).toPromise();
+        )
+            .toPromise()
+            .catch(error => {
+                throw new Error(
+                    `Error fetching program stage of program with id ${config.programId}: ${
+                        error instanceof Error ? error.message : String(error)
+                    }`
+                );
+            });
+
         return new ProgramLoggerD2Repository(config, d2ProgramStage);
     }
 
