@@ -5,6 +5,7 @@ import { Id } from "../../domain/entities/Base";
 import { DefaultLog } from "../../domain/entities/Log";
 import { ProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
+import { getErrorMessage } from "../../loggers/utils/getErrorMessage";
 
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
@@ -38,9 +39,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             .toPromise()
             .catch(error => {
                 throw new Error(
-                    `Error fetching program stage of program with id ${config.programId}: ${
-                        error instanceof Error ? error.message : String(error)
-                    }`
+                    `Error fetching program stage of program with id ${
+                        config.programId
+                    }: ${getErrorMessage(error)}`
                 );
             });
 

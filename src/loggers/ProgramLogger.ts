@@ -10,6 +10,7 @@ import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCas
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 import { mapContentToLog } from "./utils/mapContentToLog";
 import { logErrorInConsole } from "./utils/logErrorInConsole";
+import { getErrorMessage } from "./utils/getErrorMessage";
 
 // TODO: homogenize the use of Promises or Futures
 export class ProgramLogger implements Logger<string> {
@@ -23,7 +24,7 @@ export class ProgramLogger implements Logger<string> {
                 throw new Error(
                     `Error checking program configuration for program with id ${
                         config.programId
-                    }: ${error instanceof Error ? error.message : String(error)}`
+                    }: ${getErrorMessage(error)}`
                 );
             });
 

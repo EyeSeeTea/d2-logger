@@ -8,6 +8,7 @@ import { TrackerProgramD2Repository } from "../data/repositories/TrackerProgramD
 import { TrackerProgramLoggerD2Repository } from "../data/repositories/TrackerProgramLoggerD2Repository";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 import { logErrorInConsole } from "./utils/logErrorInConsole";
+import { getErrorMessage } from "./utils/getErrorMessage";
 
 // TODO: homogenize the use of Promises or Futures
 export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
@@ -23,7 +24,7 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
                 throw new Error(
                     `Error checking program configuration for program with id ${
                         config.trackerProgramId
-                    }: ${error instanceof Error ? error.message : String(error)}`
+                    }: ${getErrorMessage(error)}`
                 );
             });
 
