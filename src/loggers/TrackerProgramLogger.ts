@@ -7,6 +7,8 @@ import { LogMessageUseCase } from "../domain/usecases/LogMessageUseCase";
 import { TrackerProgramD2Repository } from "../data/repositories/TrackerProgramD2Repository";
 import { TrackerProgramLoggerD2Repository } from "../data/repositories/TrackerProgramLoggerD2Repository";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
+import { logErrorInConsole } from "./utils/logErrorInConsole";
+import { getErrorMessage } from "./utils/getErrorMessage";
 
 // TODO: homogenize the use of Promises or Futures
 export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
@@ -17,7 +19,14 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
             new TrackerProgramD2Repository()
         )
             .execute(config)
-            .toPromise();
+            .toPromise()
+            .catch(error => {
+                throw new Error(
+                    `Error checking program configuration for program with id ${
+                        config.trackerProgramId
+                    }: ${getErrorMessage(error)}`
+                );
+            });
 
         if (isConfigOk) {
             const loggerRepository = new TrackerProgramLoggerD2Repository(config);
@@ -57,7 +66,12 @@ export class TrackerProgramLogger implements Logger<TrackerProgramContent> {
     private log(content: TrackerProgramContent, messageType: MessageType): Promise<void> {
         const options = { isDebug: this.isDebug };
         const log = this.mapContentToLog(content, messageType);
-        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
+        return new LogMessageUseCase(this.loggerRepository)
+            .execute(log, options)
+            .toPromise()
+            .catch((error: unknown) => {
+                logErrorInConsole(error, "Error while logging message");
+            });
     }
 
     private mapContentToLog(
