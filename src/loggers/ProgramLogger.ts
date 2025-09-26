@@ -9,6 +9,8 @@ import { ProgramLoggerD2Repository } from "../data/repositories/ProgramLoggerD2R
 import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 import { mapContentToLog } from "./utils/mapContentToLog";
+import { logErrorInConsole } from "./utils/logErrorInConsole";
+import { getErrorMessage } from "./utils/getErrorMessage";
 
 // TODO: homogenize the use of Promises or Futures
 export class ProgramLogger implements Logger<string> {
@@ -17,7 +19,15 @@ export class ProgramLogger implements Logger<string> {
     static async create(config: ProgramLoggerConfig): Promise<ProgramLogger> {
         const isConfigOk = await new CheckConfigProgramLoggerUseCase(new ProgramD2Repository())
             .execute(config)
-            .toPromise();
+            .toPromise()
+            .catch(error => {
+                throw new Error(
+                    `Error checking program configuration for program with id ${
+                        config.programId
+                    }: ${getErrorMessage(error)}`
+                );
+            });
+
         if (isConfigOk) {
             const loggerRepository = await ProgramLoggerD2Repository.init(config);
             return new ProgramLogger(loggerRepository, config.debug);
@@ -51,12 +61,24 @@ export class ProgramLogger implements Logger<string> {
     batchLog(content: BatchLogContent): Promise<void> {
         const options = { isDebug: this.isDebug };
         const logs = content.map(content => mapContentToLog(content.content, content.messageType));
-        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs, options).toPromise();
+
+        return new BatchLogMessageUseCase(this.loggerRepository)
+            .execute(logs, options)
+            .toPromise()
+            .catch((error: unknown) => {
+                logErrorInConsole(error, "Error while processing batch logs");
+            });
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
         const options = { isDebug: this.isDebug };
         const log = mapContentToLog(content, messageType);
-        return new LogMessageUseCase(this.loggerRepository).execute(log, options).toPromise();
+
+        return new LogMessageUseCase(this.loggerRepository)
+            .execute(log, options)
+            .toPromise()
+            .catch((error: unknown) => {
+                logErrorInConsole(error, "Error while logging message");
+            });
     }
 }
