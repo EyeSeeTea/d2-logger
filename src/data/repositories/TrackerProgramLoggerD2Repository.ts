@@ -11,7 +11,6 @@ import {
 } from "../../domain/entities/Log";
 import { TrackerProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
-import { TrackerEnrollmentsResponse } from "@eyeseetea/d2-api/api/trackerEnrollments";
 
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
@@ -81,13 +80,7 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
                 enrollment: enrollmentId,
             })
         ).flatMap(response => {
-            // Temporal fix while we wait for PR#156 to be merged in d2-api
-            // https://github.com/EyeSeeTea/d2-api/pull/156
-            const newResponse = response as TrackerEnrollmentsResponse & {
-                enrollments?: TrackerEnrollmentsResponse["instances"];
-            };
-            const instances = newResponse.instances || newResponse.enrollments;
-            const orgUnitId = instances[0]?.orgUnit;
+            const orgUnitId = response.instances[0]?.orgUnit;
             if (orgUnitId) {
                 return Future.success(orgUnitId);
             } else {

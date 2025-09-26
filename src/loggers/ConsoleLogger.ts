@@ -6,7 +6,6 @@ import { ConsoleLoggerRepository } from "../data/repositories/ConsoleLoggerRepos
 import { BatchLogMessageUseCase } from "../domain/usecases/BatchLogMessageUseCase";
 import { BatchLogContent } from "../domain/entities/BatchLogContent";
 import { mapContentToLog } from "./utils/mapContentToLog";
-import { logErrorInConsole } from "./utils/logErrorInConsole";
 
 // TODO: homogenize the use of Promises or Futures
 export class ConsoleLogger implements Logger<string> {
@@ -39,20 +38,12 @@ export class ConsoleLogger implements Logger<string> {
 
     batchLog(content: BatchLogContent): Promise<void> {
         const logs = content.map(content => mapContentToLog(content.content, content.messageType));
-        return new BatchLogMessageUseCase(this.loggerRepository)
-            .execute(logs)
-            .toPromise()
-            .catch((error: unknown) => {
-                logErrorInConsole(error, "Error while processing batch logs");
-            });
+        return new BatchLogMessageUseCase(this.loggerRepository).execute(logs).toPromise();
     }
 
     private log(content: string, messageType: MessageType): Promise<void> {
         return new LogMessageUseCase(this.loggerRepository)
             .execute({ message: content, messageType: messageType })
-            .toPromise()
-            .catch((error: unknown) => {
-                logErrorInConsole(error, "Error while logging message");
-            });
+            .toPromise();
     }
 }
