@@ -24,9 +24,9 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
     messageTypeId: Id | undefined;
 
     constructor(config: TrackerProgramLoggerConfig) {
-        const { baseUrl, auth, trackerProgramId, messageTypeId } = config;
+        const { d2ApiOptions, trackerProgramId, messageTypeId } = config;
 
-        this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        this.api = new D2Api(d2ApiOptions);
         this.trackerProgramId = trackerProgramId;
         this.messageTypeId = messageTypeId;
     }

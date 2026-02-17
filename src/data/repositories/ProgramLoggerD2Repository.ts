@@ -20,9 +20,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     programStage: D2ProgramStage;
 
     constructor(config: ProgramLoggerConfig, d2ProgramStage: D2ProgramStage) {
-        const { baseUrl, auth, programId, dataElements, organisationUnitId } = config;
+        const { d2ApiOptions, programId, dataElements, organisationUnitId } = config;
 
-        this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        this.api = new D2Api(d2ApiOptions);
         this.programId = programId;
         this.messageId = dataElements.messageId;
         this.messageTypeId = dataElements.messageTypeId;
@@ -31,7 +31,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
     }
 
     static async init(config: ProgramLoggerConfig): Promise<ProgramLoggerD2Repository> {
-        const api = new D2Api({ baseUrl: config.baseUrl, auth: config.auth });
+        const api = new D2Api(config.d2ApiOptions);
         const d2ProgramStage = await ProgramLoggerD2Repository.getProgramStage(
             api,
             config.programId

@@ -1,6 +1,7 @@
 import { boolean, command, flag, option, string, subcommands } from "cmd-ts";
 import { AuthString, getD2ApiFromArgs } from "../common";
 import { ProgramLogger, initLogger } from "../..";
+import { D2ApiOptions } from "../../types/d2-api";
 
 export function getCommand() {
     const programLogger = command({
@@ -46,11 +47,14 @@ export function getCommand() {
         handler: async args => {
             const { url, auth, orgUnitId, programId, messageTypeId, messageId, debug } = args;
             try {
+                const d2ApiOptions: D2ApiOptions = {
+                    baseUrl: url,
+                    auth: auth,
+                };
                 const logger: ProgramLogger = await initLogger({
                     type: "program",
                     debug: debug,
-                    baseUrl: url,
-                    auth: auth,
+                    d2ApiOptions: d2ApiOptions,
                     organisationUnitId: orgUnitId,
                     programId: programId,
                     dataElements: {

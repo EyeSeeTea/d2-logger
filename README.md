@@ -13,16 +13,23 @@ There are three types of logger output:
     Therefore, the following configuration will be passed to the logger:
 
     ```typescript
-    import { initLogger, ProgramLogger } from "@eyeseetea/d2-logger";
+    import { initLogger, ProgramLogger, LoggerD2ApiOptions } from "@eyeseetea/d2-logger";
 
-    const logger: ProgramLogger = await initLogger({
-        type: "program",
-        debug: true,
+    const d2ApiOptions: LoggerD2ApiOptions = {
         baseUrl: "https://play.dhis2.org/40.2.2",
         auth: {
             username: "admin",
             password: "district",
         },
+        // backend?: "xhr" | "fetch"
+        // apiVersion?: number
+        // timeout?: number
+    };
+
+    const logger: ProgramLogger = await initLogger({
+        type: "program",
+        debug: true,
+        d2ApiOptions: d2ApiOptions,
         organisationUnitId: "", // Organisation unit Id where the program is registered
         programId: "", // Event program Id where register the logs as events
         dataElements: {
@@ -34,6 +41,7 @@ There are three types of logger output:
 
     Notice:
 
+    - `d2ApiOptions` corresponds to the `D2ApiOptions` type exported by `@eyeseetea/d2-logger`.
     - Please note that `auth` is not mandatory if it's used in the DHIS2 app instead of in a script.
     - If `debug` is `true`, then in addition to registering the logs in the DHIS2 program, they will also be displayed on the console.
 
@@ -98,16 +106,23 @@ There are three types of logger output:
     Therefore, the following configuration will be passed to the logger:
 
     ```typescript
-    import { initLogger, TrackerProgramLogger } from "@eyeseetea/d2-logger";
+    import { initLogger, TrackerProgramLogger, LoggerD2ApiOptions } from "@eyeseetea/d2-logger";
 
-    const logger: TrackerProgramLogger = await initLogger({
-        type: "trackerProgram",
-        debug: true,
+    const d2ApiOptions: LoggerD2ApiOptions = {
         baseUrl: "https://play.dhis2.org/40.2.2",
         auth: {
             username: "admin",
             password: "district",
         },
+        // backend?: "xhr" | "fetch"
+        // apiVersion?: number
+        // timeout?: number
+    };
+
+    const logger: TrackerProgramLogger = await initLogger({
+        type: "trackerProgram",
+        debug: true,
+        d2ApiOptions: d2ApiOptions,
         trackerProgramId: "", // Tracker program Id where register the logs as events
         messageTypeId: "", // Id of the data element which is the types of log
     });
