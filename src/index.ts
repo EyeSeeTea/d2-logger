@@ -53,5 +53,6 @@ async function initLogger<Config extends LoggerConfig>(
 }
 
 export type { D2ApiOptions as LoggerD2ApiOptions } from "./types/d2-api";
+export type { BatchLogContent };
 
-export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger, BatchLogContent };
+export { ConsoleLogger, ProgramLogger, TrackerProgramLogger, initLogger };

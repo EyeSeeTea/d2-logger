@@ -70,6 +70,7 @@ export function getCommand() {
                 const d2ApiOptions: D2ApiOptions = {
                     baseUrl: url,
                     auth: auth,
+                    backend: "xhr",
                 };
 
                 const logger: TrackerProgramLogger = await initLogger({

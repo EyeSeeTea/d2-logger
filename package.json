@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.5.4",
-        "@eyeseetea/d2-api": "1.14.0",
+        "@eyeseetea/d2-api": "1.20.0",
         "cmd-ts": "0.13.0",
         "real-cancellable-promise": "^1.1.2",
         "typed-immutable-map": "0.2.0"

@@ -101,7 +101,7 @@ There are three types of logger output:
 
 3. Using a DHIS2 tracker program to register the logs as events:
 
-    You will need to have and existing tracker program in DHIS2. In order to be able to log the log type (Error", "Warn", "Success", "Info" and "Debug") in the event, it would be necessary to create a data element and assign it to the program stages, and then add this data element id to the configuration.
+    You will need to have and existing tracker program in DHIS2. In order to be able to log the log type (Error", "Warn", "Success", "Info" and "Debug") in the event, it would be necessary to create a data element and assign it to the repeatable program stages, and then add this data element id to the configuration.
 
     Therefore, the following configuration will be passed to the logger:
 

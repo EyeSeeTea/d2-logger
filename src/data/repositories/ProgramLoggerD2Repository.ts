@@ -1,4 +1,4 @@
-import { D2Api, MetadataPick, D2TrackerEvent, DataValue } from "../../types/d2-api";
+import { D2Api, MetadataPick, D2TrackerEventToPost } from "../../types/d2-api";
 import { apiToFuture, FutureData } from "../api-futures";
 import { Future } from "../../domain/entities/generic/Future";
 import { Id } from "../../domain/entities/Base";
@@ -88,7 +88,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         return this.postApiTracker(d2EventsProgram);
     }
 
-    private postApiTracker(d2EventsProgram: D2TrackerEvent[]): FutureData<void> {
+    private postApiTracker(d2EventsProgram: D2TrackerEventToPost[]): FutureData<void> {
         return apiToFuture(
             this.api.tracker.postAsync(
                 {
@@ -121,7 +121,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         messageId: Id;
         messageTypeId: Id;
         programStage: D2ProgramStage;
-    }): D2TrackerEvent {
+    }): D2TrackerEventToPost {
         const { log, programId, messageId, messageTypeId, organisationUnitId, programStage } =
             params;
         const dataValues = this.getDataValuesFromLog({
@@ -146,7 +146,7 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
         messageId: Id;
         messageTypeId: Id;
         programStage: D2ProgramStage;
-    }): DataValue[] {
+    }): D2TrackerEventToPost["dataValues"] {
         const { log, messageId, messageTypeId, programStage } = params;
 
         const messageTypeDataElement = programStage.programStageDataElements.find(
