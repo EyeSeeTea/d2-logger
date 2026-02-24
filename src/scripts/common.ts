@@ -28,7 +28,7 @@ export function getD2ApiFromArgs(args: D2ApiArgs): D2Api {
     const { baseUrl, auth } = args.auth
         ? { baseUrl: args.url, auth: args.auth }
         : getApiOptionsFromUrl(args.url);
-    return new D2Api({ baseUrl, auth });
+    return new D2Api({ baseUrl, auth, backend: "xhr" });
 }
 
 export function getApiUrlOption(options?: { long: string }) {
