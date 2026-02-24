@@ -6,9 +6,9 @@ import { ProgramRepository } from "../../domain/repositories/ProgramRepository";
 
 export class TrackerProgramD2Repository implements ProgramRepository {
     checkConfig(config: TrackerProgramLoggerConfig): FutureData<boolean> {
-        const { baseUrl, auth, trackerProgramId } = config;
+        const { d2ApiOptions, trackerProgramId } = config;
 
-        const d2Api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        const d2Api = new D2Api(d2ApiOptions);
 
         return apiToFuture(
             d2Api.models.programs.get({

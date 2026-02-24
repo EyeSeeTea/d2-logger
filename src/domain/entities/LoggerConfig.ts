@@ -1,3 +1,4 @@
+import { D2ApiOptions } from "../../types/d2-api";
 import { Maybe } from "../../utils/ts-utils";
 import { Id } from "./Base";
 
@@ -13,17 +14,11 @@ export interface ConsoleLoggerConfig extends LoggerConfigBase {
 
 export interface ProgramLoggerConfig extends LoggerConfigBase {
     type: "program";
-    baseUrl: string;
-    auth: Maybe<Auth>;
+    d2ApiOptions: D2ApiOptions;
     programId: Id;
     dataElements: DataElements;
     organisationUnitId: Id;
 }
-
-type Auth = {
-    username: string;
-    password: string;
-};
 
 export type DataElements = {
     messageId: Id;
@@ -32,8 +27,7 @@ export type DataElements = {
 
 export interface TrackerProgramLoggerConfig extends LoggerConfigBase {
     type: "trackerProgram";
-    baseUrl: string;
-    auth: Maybe<Auth>;
+    d2ApiOptions: D2ApiOptions;
     trackerProgramId: Id;
     messageTypeId: Maybe<Id>;
 }

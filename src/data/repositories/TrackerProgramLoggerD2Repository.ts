@@ -1,5 +1,4 @@
-import { EventStatus } from "@eyeseetea/d2-api";
-import { D2Api, MetadataPick, D2TrackerEvent, DataValue } from "../../types/d2-api";
+import { D2Api, MetadataPick, D2TrackerEventToPost } from "../../types/d2-api";
 import { apiToFuture, FutureData } from "../api-futures";
 import { Future } from "../../domain/entities/generic/Future";
 import { Id } from "../../domain/entities/Base";
@@ -23,9 +22,9 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
     messageTypeId: Id | undefined;
 
     constructor(config: TrackerProgramLoggerConfig) {
-        const { baseUrl, auth, trackerProgramId, messageTypeId } = config;
+        const { d2ApiOptions, trackerProgramId, messageTypeId } = config;
 
-        this.api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        this.api = new D2Api(d2ApiOptions);
         this.trackerProgramId = trackerProgramId;
         this.messageTypeId = messageTypeId;
     }
@@ -80,7 +79,8 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
                 enrollment: enrollmentId,
             })
         ).flatMap(response => {
-            const orgUnitId = response.instances[0]?.orgUnit;
+            const instances = response.instances;
+            const orgUnitId = instances[0]?.orgUnit;
             if (orgUnitId) {
                 return Future.success(orgUnitId);
             } else {
@@ -97,12 +97,12 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         log: TrackerProgramLog,
         programStage: D2ProgramStage,
         organisationUnitId: Id
-    ): D2TrackerEvent {
+    ): D2TrackerEventToPost {
         const { programStageId, trackedEntityId, enrollmentId, eventStatus } = log.config;
         const dataValues = this.getDataValuesFromLog(programStage, log.messages, log.messageType);
         const event = {
             event: "",
-            status: (eventStatus as EventStatus) || (TRACKER_EVENT_DEFAULT_STATUS as EventStatus), // TODO: remove once d2-api EventStatus has SCHEDULE
+            status: eventStatus || TRACKER_EVENT_DEFAULT_STATUS,
             program: this.trackerProgramId,
             programStage: programStageId,
             enrollment: enrollmentId,
@@ -123,7 +123,7 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         programStage: D2ProgramStage,
         messages: TrackerProgramMessages[],
         messageType: MessageType
-    ): DataValue[] {
+    ): D2TrackerEventToPost["dataValues"] {
         const messageTypeDataElement = programStage.programStageDataElements.find(
             ({ dataElement }) => dataElement.id === this.messageTypeId
         )?.dataElement;
@@ -133,7 +133,7 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
                 option => option.name === messageType || option.code === messageType
             )?.code || messageType;
 
-        const dataValues: DataValue[] =
+        const dataValues: D2TrackerEventToPost["dataValues"] =
             this.messageTypeId && messageTypeDataElement
                 ? [
                       {
@@ -144,7 +144,10 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
                 : [];
 
         return messages.reduce(
-            (acc: DataValue[], message: TrackerProgramMessages): DataValue[] => [
+            (
+                acc: D2TrackerEventToPost["dataValues"],
+                message: TrackerProgramMessages
+            ): D2TrackerEventToPost["dataValues"] => [
                 ...acc,
                 {
                     dataElement: message.id,
@@ -155,7 +158,7 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         );
     }
 
-    private postApiTracker(d2TrackerEvent: D2TrackerEvent): FutureData<void> {
+    private postApiTracker(d2TrackerEvent: D2TrackerEventToPost): FutureData<void> {
         return apiToFuture(
             this.api.tracker.postAsync(
                 {

@@ -1,4 +1,9 @@
 export { CancelableResponse } from "@eyeseetea/d2-api";
-export { D2Api } from "@eyeseetea/d2-api/2.36";
-export type { MetadataPick } from "@eyeseetea/d2-api/2.36";
-export type { D2TrackerEvent, DataValue } from "@eyeseetea/d2-api/api/trackerEvents";
+
+export { D2Api } from "@eyeseetea/d2-api/2.40";
+
+export type { MetadataPick } from "@eyeseetea/d2-api/2.40";
+
+export type { D2TrackerEventToPost, DataValue } from "@eyeseetea/d2-api/api/trackerEvents";
+
+export type { D2ApiOptions } from "@eyeseetea/d2-api/api/d2Api";

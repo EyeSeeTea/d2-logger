@@ -7,9 +7,9 @@ import { ProgramRepository } from "../../domain/repositories/ProgramRepository";
 
 export class ProgramD2Repository implements ProgramRepository {
     checkConfig(config: ProgramLoggerConfig): FutureData<boolean> {
-        const { baseUrl, auth, programId, dataElements } = config;
+        const { d2ApiOptions, programId, dataElements } = config;
 
-        const d2Api = new D2Api({ baseUrl: baseUrl, auth: auth });
+        const d2Api = new D2Api(d2ApiOptions);
 
         return this.checkProgramIsOk(d2Api, programId, dataElements).flatMap(programIsOk => {
             if (programIsOk) {
