@@ -10,6 +10,7 @@ import {
 } from "../../domain/entities/Log";
 import { TrackerProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
+import { getRandomUid } from "../../utils/uid";
 
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
@@ -101,7 +102,7 @@ export class TrackerProgramLoggerD2Repository implements LoggerRepository {
         const { programStageId, trackedEntityId, enrollmentId, eventStatus } = log.config;
         const dataValues = this.getDataValuesFromLog(programStage, log.messages, log.messageType);
         const event = {
-            event: "",
+            event: getRandomUid(),
             status: eventStatus || TRACKER_EVENT_DEFAULT_STATUS,
             program: this.trackerProgramId,
             programStage: programStageId,
