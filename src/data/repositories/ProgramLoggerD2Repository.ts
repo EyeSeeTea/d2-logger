@@ -5,6 +5,7 @@ import { Id } from "../../domain/entities/Base";
 import { DefaultLog } from "../../domain/entities/Log";
 import { ProgramLoggerConfig } from "../../domain/entities/LoggerConfig";
 import { LoggerRepository } from "../../domain/repositories/LoggerRepository";
+import { getRandomUid } from "../../utils/uid";
 
 const IMPORT_STRATEGY_CREATE = "CREATE";
 const TRACKER_IMPORT_JOB = "TRACKER_IMPORT_JOB";
@@ -120,8 +121,9 @@ export class ProgramLoggerD2Repository implements LoggerRepository {
             messageTypeId,
             programStage,
         });
+
         return {
-            event: "",
+            event: getRandomUid(),
             occurredAt: new Date().toISOString(),
             status: EVENT_PROGRAM_STATUS,
             program: programId,
