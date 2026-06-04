@@ -6,7 +6,7 @@ publish_opts=$(if echo "$version" | grep -q beta; then echo "--tag beta"; fi)
 
 rm build -rf
 yarn build
-yarn publish $publish_opts --new-version "$version" build/
+(cd build && npm publish $publish_opts)
 
 git tag "v$version" -f
 git push --tags
